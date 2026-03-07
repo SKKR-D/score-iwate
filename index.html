@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>もえあがれ岩手</title>
+    <title>TSUCHIBUCHI GO!</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Noto+Sans+JP:wght@400;700;900&display=swap"
@@ -453,24 +453,21 @@
             background: var(--bg);
             position: relative;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            overflow-y: auto;
-            overflow-x: hidden;
         }
 
         .header {
-            padding: 16px 12px;
+            padding: 8px 12px;
             background: var(--surface);
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-shrink: 0;
-            min-height: 100px;
         }
 
         .game-score-display {
-            font-family: 'Century Gothic', sans-serif;
-            font-size: clamp(2rem, 8vw, 4rem);
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
             font-weight: 900;
         }
 
@@ -523,12 +520,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Helvetica World', Helvetica, sans-serif;
-            font-size: clamp(3rem, 35cqi, 12rem);
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(4rem, 15cqi, 6rem);
             container-type: inline-size;
-            line-height: 1;
             font-weight: 900;
-            margin: 10px 0;
         }
 
         .left .point-display {
@@ -598,23 +593,6 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-        }
-
-        /* サーバー/レシーバーの行全体を強調するスタイル */
-        .active-server {
-            background: #fff9c4 !important;
-            /* 薄い黄色 */
-            outline: 2px solid #d32f2f !important;
-            /* 赤い太枠 (borderの代わりにoutlineを使用してレイアウトシフトを防ぐ) */
-            border-color: transparent !important;
-        }
-
-        .active-receiver {
-            background: #e3f2fd !important;
-            /* 薄い水色 */
-            outline: 2px solid #1976d2 !important;
-            /* 青い太枠 (borderの代わりにoutlineを使用してレイアウトシフトを防ぐ) */
-            border-color: transparent !important;
         }
 
         .p-btns {
@@ -822,8 +800,8 @@
 
             <div id="step-0">
                 <h1
-                    style="text-align: center; background: linear-gradient(135deg, #ff7b00, #ffc107); -webkit-background-clip: text; background-clip: text; color: transparent; font-family: 'Orbitron', sans-serif; font-size: clamp(2rem, 8vw, 3.6rem); font-weight: 900; margin-bottom: 20px; letter-spacing: 2px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3)); line-height: 1.2;">
-                    もえあがれ岩手</h1>
+                    style="text-align: center; background: linear-gradient(135deg, #ff7b00, #ffc107); -webkit-background-clip: text; background-clip: text; color: transparent; font-family: 'Orbitron', sans-serif; font-size: 3.6rem; font-weight: 900; margin-bottom: 20px; letter-spacing: 2px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3)); line-height: 1.2;">
+                    TSUCHIBUCHI GO!</h1>
                 <div class="step-bar">
                     <div class="step-dot active"></div>
                     <div class="step-dot"></div>
@@ -836,13 +814,13 @@
                 </div>
                 <p class="input-label">選手登録</p>
                 <div class="match-info-grid">
-                    <div class="full-width" style="color:var(--blue); font-weight:bold; font-size:0.8rem;">🔵 自チーム (岩手)
+                    <div class="full-width" style="color:var(--blue); font-weight:bold; font-size:0.8rem;">🔵 自チーム (土淵)
                     </div>
                     <input class="name-input" id="n-A" value="選手A" placeholder="後衛"><input class="name-input" id="n-B"
                         value="選手B" placeholder="前衛">
                     <div class="full-width"
                         style="color:var(--red); font-weight:bold; font-size:0.8rem; margin-top:4px;">🔴 相手チーム <input
-                            id="team-r-name" placeholder="チーム名"
+                            id="team-r-name" placeholder="校名"
                             style="width:100px; font-size:0.8rem; border:none; background:transparent; color: var(--text);">
                     </div>
                     <input class="name-input" id="n-C" value="選手C"><input class="name-input" id="n-D" value="選手D">
@@ -854,7 +832,7 @@
                 </div>
 
                 <div class="option-group" id="serve-team-opts">
-                    <button class="opt-btn" onclick="selServTeam(0)">🔵 岩手S</button>
+                    <button class="opt-btn" onclick="selServTeam(0)">🔵 土淵S</button>
                     <button class="opt-btn" onclick="selServTeam(1)">🔴 相手S</button>
                 </div>
 
@@ -883,7 +861,7 @@
                 <div class="result-header">
                     <div>
                         <div class="rh-title">WINNER</div>
-                        <div class="rh-winner" id="winner-name">IWATE</div>
+                        <div class="rh-winner" id="winner-name">TSUCHIBUCHI</div>
                     </div>
                     <div class="rh-score" id="winner-score">4 - 2</div>
                 </div>
@@ -925,27 +903,18 @@
 
     <div class="app" id="main-app">
         <div class="header">
-            <div style="display:flex; flex-direction:column; justify-content:center;">
-                <div style="font-size:1.2rem; font-weight:bold; margin-top:16px;" id="game-info">1ゲーム目</div>
-            </div>
-            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                <div style="font-size:0.8rem; font-weight:bold; color:var(--text-dim); margin-bottom: 4px;">ゲームカウント
-                </div>
-                <div class="game-score-display" style="line-height:1;margin-top:-10px;"><span class="gs-left"
-                        id="gs-L">0</span>-<span class="gs-right" id="gs-R">0</span></div>
-            </div>
-            <div style="display:flex; gap:8px; align-items:center;">
+            <div style="font-size:0.8rem; font-weight:bold;" id="game-info">G1</div>
+            <div class="game-score-display"><span class="gs-left" id="gs-L">0</span>-<span class="gs-right"
+                    id="gs-R">0</span></div>
+            <div style="display:flex; gap:8px;">
                 <button onclick="undo()"
-                    style="background:none; border:none; font-size:1.6rem; cursor:pointer;">↩️</button>
+                    style="background:none; border:none; font-size:1.2rem; cursor:pointer;">↩️</button>
             </div>
         </div>
 
         <div class="score-area">
             <div class="team-panel left">
-                <div class="panel-top" id="tname-L">岩手</div>
-                <div
-                    style="text-align:center; font-size:0.75rem; color:var(--text-dim); font-weight:bold; margin-top:4px;">
-                    ポイントカウント</div>
+                <div class="panel-top" id="tname-L">土淵</div>
                 <div class="point-display" id="pt-L">0</div>
                 <div class="players-box">
                     <div class="p-row" id="row-A">
@@ -964,9 +933,6 @@
             </div>
             <div class="team-panel right">
                 <div class="panel-top" id="tname-R">相手</div>
-                <div
-                    style="text-align:center; font-size:0.75rem; color:var(--text-dim); font-weight:bold; margin-top:4px;">
-                    ポイントカウント</div>
                 <div class="point-display" id="pt-R">0</div>
                 <div class="players-box">
                     <div class="p-row" id="row-C">
@@ -1006,7 +972,7 @@
             maxG: 5, winG: 3, gL: 0, gR: 0, pL: 0, pR: 0, totalP: 0, fault: 0, isFinal: false,
             startTeam: null, curServTeam: null, sOrder: [], rOrder: [],
             names: { A: '選手A', B: '選手B', C: '選手C', D: '選手D' },
-            teams: { L: '岩手', R: '相手' },
+            teams: { L: '土淵', R: '相手' },
             meta: { tourney: '', stage: '', date: '' },
             stats: { A: { p: 0, m: 0, fi: 0, st: 0, pt: {}, mt: {} }, B: { p: 0, m: 0, fi: 0, st: 0, pt: {}, mt: {} }, C: { p: 0, m: 0, fi: 0, st: 0, pt: {}, mt: {} }, D: { p: 0, m: 0, fi: 0, st: 0, pt: {}, mt: {} } },
             hist: [], log: []
@@ -1153,17 +1119,12 @@
             document.getElementById('gs-L').textContent = S.gL; document.getElementById('gs-R').textContent = S.gR;
             const d = getDisp(S.pL, S.pR, S.isFinal);
             document.getElementById('pt-L').textContent = d.l; document.getElementById('pt-R').textContent = d.r;
-            document.getElementById('game-info').textContent = S.isFinal ? 'ファイナル' : `${S.gL + S.gR + 1}ゲーム目`;
+            document.getElementById('game-info').textContent = S.isFinal ? 'FINAL' : `G${S.gL + S.gR + 1}`;
 
             ['A', 'B', 'C', 'D'].forEach(p => {
                 document.getElementById('nm-' + p).textContent = S.names[p];
                 document.getElementById('role-' + p).className = `p-role ${p === inf.s ? 'role-s' : (p === inf.r ? 'role-r' : '')}`;
                 document.getElementById('role-' + p).textContent = p === inf.s ? 'S' : (p === inf.r ? 'R' : '');
-
-                const row = document.getElementById('row-' + p);
-                row.classList.remove('active-server', 'active-receiver');
-                if (p === inf.s) row.classList.add('active-server');
-                if (p === inf.r) row.classList.add('active-receiver');
             });
 
             if (S.fault === 0) {

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>もえあがれ 岩手!</title>
+    <title>もえあがれ岩手</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Noto+Sans+JP:wght@400;700;900&display=swap"
@@ -456,18 +456,19 @@
         }
 
         .header {
-            padding: 8px 12px;
+            padding: 16px 12px;
             background: var(--surface);
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-shrink: 0;
+            min-height: 100px;
         }
 
         .game-score-display {
-            font-family: 'Orbitron', monospace;
-            font-size: 2rem;
+            font-family: 'Century Gothic', sans-serif;
+            font-size: 4rem;
             font-weight: 900;
         }
 
@@ -520,10 +521,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Orbitron', monospace;
-            font-size: clamp(4rem, 15cqi, 6rem);
+            font-family: 'Helvetica World', Helvetica, sans-serif;
+            font-size: clamp(8rem, 40cqi, 15rem);
             container-type: inline-size;
+            line-height: 1;
             font-weight: 900;
+            margin: 10px 0;
         }
 
         .left .point-display {
@@ -593,6 +596,21 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+
+        /* サーバー/レシーバーの行全体を強調するスタイル */
+        .active-server {
+            background: #fff9c4 !important;
+            /* 薄い黄色 */
+            border: 2px solid #d32f2f !important;
+            /* 赤い太枠 */
+        }
+
+        .active-receiver {
+            background: #e3f2fd !important;
+            /* 薄い水色 */
+            border: 2px solid #1976d2 !important;
+            /* 青い太枠 */
         }
 
         .p-btns {
@@ -903,18 +921,27 @@
 
     <div class="app" id="main-app">
         <div class="header">
-            <div style="font-size:0.8rem; font-weight:bold;" id="game-info">G1</div>
-            <div class="game-score-display"><span class="gs-left" id="gs-L">0</span>-<span class="gs-right"
-                    id="gs-R">0</span></div>
-            <div style="display:flex; gap:8px;">
+            <div style="display:flex; flex-direction:column; justify-content:center;">
+                <div style="font-size:1.2rem; font-weight:bold; margin-top:16px;" id="game-info">1ゲーム目</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                <div style="font-size:0.8rem; font-weight:bold; color:var(--text-dim); margin-bottom: 4px;">ゲームカウント
+                </div>
+                <div class="game-score-display" style="line-height:1;margin-top:-10px;"><span class="gs-left"
+                        id="gs-L">0</span>-<span class="gs-right" id="gs-R">0</span></div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
                 <button onclick="undo()"
-                    style="background:none; border:none; font-size:1.2rem; cursor:pointer;">↩️</button>
+                    style="background:none; border:none; font-size:1.6rem; cursor:pointer;">↩️</button>
             </div>
         </div>
 
         <div class="score-area">
             <div class="team-panel left">
                 <div class="panel-top" id="tname-L">岩手</div>
+                <div
+                    style="text-align:center; font-size:0.75rem; color:var(--text-dim); font-weight:bold; margin-top:4px;">
+                    ポイントカウント</div>
                 <div class="point-display" id="pt-L">0</div>
                 <div class="players-box">
                     <div class="p-row" id="row-A">
@@ -933,6 +960,9 @@
             </div>
             <div class="team-panel right">
                 <div class="panel-top" id="tname-R">相手</div>
+                <div
+                    style="text-align:center; font-size:0.75rem; color:var(--text-dim); font-weight:bold; margin-top:4px;">
+                    ポイントカウント</div>
                 <div class="point-display" id="pt-R">0</div>
                 <div class="players-box">
                     <div class="p-row" id="row-C">
@@ -1119,12 +1149,17 @@
             document.getElementById('gs-L').textContent = S.gL; document.getElementById('gs-R').textContent = S.gR;
             const d = getDisp(S.pL, S.pR, S.isFinal);
             document.getElementById('pt-L').textContent = d.l; document.getElementById('pt-R').textContent = d.r;
-            document.getElementById('game-info').textContent = S.isFinal ? 'FINAL' : `G${S.gL + S.gR + 1}`;
+            document.getElementById('game-info').textContent = S.isFinal ? 'ファイナル' : `${S.gL + S.gR + 1}ゲーム目`;
 
             ['A', 'B', 'C', 'D'].forEach(p => {
                 document.getElementById('nm-' + p).textContent = S.names[p];
                 document.getElementById('role-' + p).className = `p-role ${p === inf.s ? 'role-s' : (p === inf.r ? 'role-r' : '')}`;
                 document.getElementById('role-' + p).textContent = p === inf.s ? 'S' : (p === inf.r ? 'R' : '');
+
+                const row = document.getElementById('row-' + p);
+                row.classList.remove('active-server', 'active-receiver');
+                if (p === inf.s) row.classList.add('active-server');
+                if (p === inf.r) row.classList.add('active-receiver');
             });
 
             if (S.fault === 0) {
@@ -1351,6 +1386,5 @@
 
     </script>
 </body>
-
 
 </html>

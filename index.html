@@ -469,7 +469,22 @@
                 b.onclick = () => { if (item.sub) { showSM(item.sub, p, (item.k === 'f' || item.k === 'b') ? item.k + '_' : prefix); } else { commit(prefix + item.k); } };
                 sm.appendChild(b);
             });
-            if (type !== 'p' && type !== 'm') { const back = document.createElement('button'); back.className = 'sm-back'; back.textContent = '戻る'; back.onclick = () => { showSM(type.startsWith('p') ? 'p' : 'm', p); }; sm.appendChild(back); }
+            
+            // ★変更点: 常に戻る/キャンセルボタンを表示する
+            const back = document.createElement('button'); 
+            back.className = 'sm-back'; 
+            
+            if (type === 'p' || type === 'm') {
+                // トップレベル(得点/ミス選択時)なら「キャンセル」として閉じる
+                back.textContent = 'キャンセル (閉じる)'; 
+                back.onclick = () => { document.getElementById('submenu').classList.remove('open'); }; 
+            } else {
+                // サブメニューなら「戻る」として親メニューに戻る
+                back.textContent = '戻る'; 
+                back.onclick = () => { showSM(type.startsWith('p') ? 'p' : 'm', p); }; 
+            }
+            sm.appendChild(back);
+            
             document.getElementById('submenu').classList.add('open');
         }
 

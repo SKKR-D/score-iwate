@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>もえあがれ岩手 Cloud</title>
+    <title>岩手選抜スコアブック</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Noto+Sans+JP:wght@400;700;900&family=Yuji+Syuku&display=swap" rel="stylesheet">
     <style>
         /* ── COLORS & THEME ── */
         :root { --bg: #f0f2f5; --surface: #ffffff; --surface2: #e4e6eb; --border: #b0b3b8; --text: #1a1a1a; --text-dim: #606770; --blue: #0060df; --blue-dim: #eef4ff; --red: #d93025; --red-dim: #ffebee; --gold: #b38600; --gold-bg: #fffbe6; --green: #008a45; --cyan: #008ba3; --app-bg: #e0e0e0; }
@@ -63,7 +63,8 @@
         .cp { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
         .cm { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
         
-        .share-row { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 8px; margin-top: 10px; }
+        /* 2列レイアウト調整 */
+        .share-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
         .share-btn { padding: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 0.8rem; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 6px; color: var(--text); cursor: pointer; }
         .share-btn:hover { background: var(--surface2); }
         
@@ -145,17 +146,24 @@
     <div id="modal" class="modal-overlay">
         <div class="modal-card">
             <div id="step-0">
-                <h1 style="text-align: center; background: linear-gradient(135deg, #ff7b00, #ffc107); -webkit-background-clip: text; background-clip: text; color: transparent; font-family: 'Orbitron', sans-serif; font-size: clamp(2rem, 8vw, 3.6rem); font-weight: 900; margin-bottom: 20px; letter-spacing: 2px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3)); line-height: 1.2;">もえあがれ岩手</h1>
+                <h1 style="text-align: center; background: linear-gradient(135deg, #ff7b00, #ffc107); -webkit-background-clip: text; background-clip: text; color: transparent; font-family: 'S Motoya Daikai', 'Sモトヤ大楷', 'Yuji Syuku', serif; font-size: clamp(1.5rem, 11vw, 3.2rem); white-space: nowrap; font-weight: 900; margin-bottom: 20px; letter-spacing: 0px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3)); line-height: 1.2;">もえあがれ 岩手！</h1>
                 <div class="step-bar"> <div class="step-dot active"></div> <div class="step-dot"></div> </div>
+                
                 <p class="input-label">大会情報</p>
                 <div class="match-info-grid">
                     <div class="full-width"><input class="name-input" id="meta-tourney" placeholder="大会名"></div>
                     <div><input class="name-input" id="meta-stage" placeholder="回戦"></div>
                     <div><input type="date" class="name-input" id="meta-date"></div>
                 </div>
+
+                <p class="input-label">スコア記入者</p>
+                <div class="match-info-grid">
+                    <div class="full-width"><input class="name-input" id="meta-scorer" placeholder="記入者名"></div>
+                </div>
+
                 <p class="input-label">選手登録</p>
                 <div class="match-info-grid">
-                    <div class="full-width" style="color:var(--blue); font-weight:bold; font-size:0.8rem;">🔵 自チーム (岩手)</div>
+                    <div class="full-width" style="color:var(--blue); font-weight:bold; font-size:0.8rem;">🔵 自チーム (岩手選抜)</div>
                     <input class="name-input" id="n-A" value="選手A" placeholder="後衛"><input class="name-input" id="n-B" value="選手B" placeholder="前衛">
                     <div class="full-width" style="color:var(--red); font-weight:bold; font-size:0.8rem; margin-top:4px;">🔴 相手チーム <input id="team-r-name" placeholder="チーム名" style="width:100px; font-size:0.8rem; border:none; background:transparent; color: var(--text);"></div>
                     <input class="name-input" id="n-C" value="選手C"><input class="name-input" id="n-D" value="選手D">
@@ -188,7 +196,7 @@
 
             <div id="step-2" style="display:none;">
                 <div class="result-header">
-                    <div><div class="rh-title">WINNER</div><div class="rh-winner" id="winner-name">IWATE</div></div>
+                    <div><div class="rh-title">WINNER</div><div class="rh-winner" id="winner-name">岩手</div></div>
                     <div class="rh-score" id="winner-score">4 - 2</div>
                 </div>
                 <div class="compact-chart-wrap"><canvas id="stats-flow-chart"></canvas></div>
@@ -202,11 +210,15 @@
                     <summary>スコア詳細を見る</summary>
                     <div class="flow-content" id="game-flow-list"></div>
                 </details>
+                
                 <div class="share-row">
                     <button class="share-btn" onclick="downloadJSON()">💾 保存</button>
-                    <button class="share-btn" id="btn-send-cloud" onclick="sendToCloud()" style="background:var(--gold-bg); color:var(--gold); border:2px solid var(--gold);">☁ 共有</button>
                     <button class="share-btn" onclick="resetMatch()">🔄 新試合</button>
+                    
+                    <button class="share-btn" id="btn-send-men" onclick="sendToCloud('MEN')" style="background:#eef4ff; color:#0060df; border:2px solid #0060df;">☁ 男子データ共有</button>
+                    <button class="share-btn" id="btn-send-women" onclick="sendToCloud('WOMEN')" style="background:#ffebee; color:#d93025; border:2px solid #d93025;">☁ 女子データ共有</button>
                 </div>
+
             </div>
         </div>
     </div>
@@ -233,11 +245,11 @@
                 <div class="players-box">
                     <div class="p-row" id="row-A">
                         <div class="p-info"><span class="p-role" id="role-A"></span><span class="p-name" id="nm-A"></span></div>
-                        <div class="p-btns"><button class="act-btn btn-p" onclick="act('L','A','p')">得点</button><button class="act-btn btn-m" onclick="act('L','A','m')">ミス</button></div>
+                        <div class="p-btns"><button class="act-btn btn-p" onclick="act('L','A','p')">ポイント</button><button class="act-btn btn-m" onclick="act('L','A','m')">ミス</button></div>
                     </div>
                     <div class="p-row" id="row-B">
                         <div class="p-info"><span class="p-role" id="role-B"></span><span class="p-name" id="nm-B"></span></div>
-                        <div class="p-btns"><button class="act-btn btn-p" onclick="act('L','B','p')">得点</button><button class="act-btn btn-m" onclick="act('L','B','m')">ミス</button></div>
+                        <div class="p-btns"><button class="act-btn btn-p" onclick="act('L','B','p')">ポイント</button><button class="act-btn btn-m" onclick="act('L','B','m')">ミス</button></div>
                     </div>
                 </div>
             </div>
@@ -248,11 +260,11 @@
                 <div class="players-box">
                     <div class="p-row" id="row-C">
                         <div class="p-info"><span class="p-role" id="role-C"></span><span class="p-name" id="nm-C"></span></div>
-                        <div class="p-btns"><button class="act-btn btn-p" onclick="act('R','C','p')">得点</button><button class="act-btn btn-m" onclick="act('R','C','m')">ミス</button></div>
+                        <div class="p-btns"><button class="act-btn btn-p" onclick="act('R','C','p')">ポイント</button><button class="act-btn btn-m" onclick="act('R','C','m')">ミス</button></div>
                     </div>
                     <div class="p-row" id="row-D">
                         <div class="p-info"><span class="p-role" id="role-D"></span><span class="p-name" id="nm-D"></span></div>
-                        <div class="p-btns"><button class="act-btn btn-p" onclick="act('R','D','p')">得点</button><button class="act-btn btn-m" onclick="act('R','D','m')">ミス</button></div>
+                        <div class="p-btns"><button class="act-btn btn-p" onclick="act('R','D','p')">ポイント</button><button class="act-btn btn-m" onclick="act('R','D','m')">ミス</button></div>
                     </div>
                 </div>
             </div>
@@ -273,8 +285,9 @@
 
     <script>
         // ── CONFIG ──
-        // ★ご指定のGAS URLを設定済みです
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx5SBQugBh1TGYz2CN7WhrzQ7TEfz5BO_BticlZOh__FGXfI7-pWlnmDahv5d1hkyFbzA/exec";
+        // ご指定のURLを設定しました
+        const GAS_URL_MEN   = "https://script.google.com/macros/s/AKfycbzZ0xMdBjqjihaxjJo1MjkVFoCGWj9vVmoCjycCprf5JS81TS2JWiaCAIKeXXzhs6pt/exec";
+        const GAS_URL_WOMEN = "https://script.google.com/macros/s/AKfycbxWQCyueRFKyJZLCI7m7r_nQKbyq3v4NiEIDpC_Fx13pCZ0U-EWcNTgiTRVGtwSdcIM/exec";
 
         // ── DATA & STATE ──
         let S = {
@@ -282,7 +295,7 @@
             startTeam: null, curServTeam: null, sOrder: [], rOrder: [],
             names: { A: '選手A', B: '選手B', C: '選手C', D: '選手D' },
             teams: { L: '岩手', R: '相手' },
-            meta: { tourney: '', stage: '', date: '' },
+            meta: { tourney: '', stage: '', date: '', scorer: '' },
             stats: { A: { p: 0, m: 0, fi: 0, st: 0, pt: {}, mt: {} }, B: { p: 0, m: 0, fi: 0, st: 0, pt: {}, mt: {} }, C: { p: 0, m: 0, fi: 0, st: 0, pt: {}, mt: {} }, D: { p: 0, m: 0, fi: 0, st: 0, pt: {}, mt: {} } },
             hist: [], log: []
         };
@@ -304,6 +317,9 @@
                 S.meta.tourney = document.getElementById('meta-tourney').value;
                 S.meta.stage = document.getElementById('meta-stage').value;
                 if(document.getElementById('meta-date').value) S.meta.date = document.getElementById('meta-date').value;
+                
+                S.meta.scorer = document.getElementById('meta-scorer').value;
+
                 step(1);
             } else if (setupStep === 1) {
                 document.getElementById('modal').classList.add('hidden');
@@ -318,7 +334,6 @@
             if (n === 1) {
                 buildPos();
                 
-                // 【★修正箇所】1ゲーム目(logが0件)のときだけ戻るボタンを表示する制御
                 const backBtn = document.getElementById('btn-back-first');
                 if (backBtn) {
                     // S.log.length === 0 なら最初のゲームなので戻れるようにする
@@ -362,8 +377,24 @@
             const { side, p, type } = _act;
             const inf = getServ();
             if (S.fault === 0 && inf.s) { S.stats[inf.s].fi++; S.stats[inf.s].st++; }
-            if (type === 'p') { S.stats[p].p++; if (sub) S.stats[p].pt[sub] = (S.stats[p].pt[sub] || 0) + 1; S.hist.push(side); side === 'L' ? S.pL++ : S.pR++; }
-            else { S.stats[p].m++; if (sub) S.stats[p].mt[sub] = (S.stats[p].mt[sub] || 0) + 1; S.hist.push(side === 'L' ? 'R' : 'L'); side === 'L' ? S.pR++ : S.pL++; }
+            
+            if (type === 'p') { 
+                S.stats[p].p++; 
+                if (sub) S.stats[p].pt[sub] = (S.stats[p].pt[sub] || 0) + 1; 
+                S.hist.push(side); 
+                side === 'L' ? S.pL++ : S.pR++; 
+            } else { 
+                S.stats[p].m++; 
+                if (sub) {
+                    S.stats[p].mt[sub] = (S.stats[p].mt[sub] || 0) + 1;
+                    // ★ GAS互換用: レシーブミス詳細(recv_...)の場合は recv としてもカウントする
+                    if (sub.startsWith('recv_')) {
+                         S.stats[p].mt['recv'] = (S.stats[p].mt['recv'] || 0) + 1;
+                    }
+                }
+                S.hist.push(side === 'L' ? 'R' : 'L'); 
+                side === 'L' ? S.pR++ : S.pL++; 
+            }
             S.fault = 0; S.totalP++; checkEnd(); document.getElementById('submenu').classList.remove('open'); update();
         }
 
@@ -449,38 +480,109 @@
         }
 
         const MENUS = {
-            p: [ { k: 'ace', l: 'エース', i: '🎯' }, { k: 'smash', l: 'スマッシュ', i: '💥' }, { k: 'attack', l: 'アタック', i: '⚡' }, { k: 'f', l: 'フォア', i: '🟦', sub: 'p_detail_f' }, { k: 'b', l: 'バック', i: '🟪', sub: 'p_detail_b' } ],
-            p_detail: [ { k: 'shoot_cross', l: 'クロス', i: '↖' }, { k: 'shoot_rev_cross', l: '逆クロス', i: '↗' }, { k: 'shoot_str', l: 'ストレート', i: '↑' }, { k: 'shoot_ctr', l: 'センター', i: '•' }, { k: 'lob_cross', l: 'クロス', i: '☁↖' }, { k: 'lob_rev_cross', l: '逆クロス', i: '☁↗' }, { k: 'lob_str', l: 'ストレート', i: '☁↑' }, { k: 'lob_ctr', l: 'センター', i: '☁•' }, { k: 'volley', l: 'ボレー', i: '🛡' } ],
-            m: [ { k: 'smash', l: 'スマッシュミス', i: '' }, { k: 'recv', l: 'レシーブミス', i: '🎾', sub: 'm_recv' }, { k: 'f', l: 'フォア', i: '🟦', sub: 'm_detail_f' }, { k: 'b', l: 'バック', i: '🟪', sub: 'm_detail_b' } ],
-            m_recv: [ { k: 'recv_f', l: 'フォアレシーブ', i: '🟦' }, { k: 'recv_b', l: 'バックレシーブ', i: '🟪' } ],
-            m_detail: [ { k: 'shoot_net', l: 'シュートNet', i: '🔴' }, { k: 'shoot_back', l: 'シュートBack', i: '⬆' }, { k: 'shoot_out_r', l: 'シュートOutR', i: '➡' }, { k: 'shoot_out_l', l: 'シュートOutL', i: '⬅' }, { k: 'lob_back', l: 'ロブBack', i: '☁⬆' }, { k: 'lob_out_r', l: 'ロブOutR', i: '☁➡' }, { k: 'lob_out_l', l: 'ロブOutL', i: '☁⬅' }, { k: 'volley', l: 'ボレー', i: '🛡' } ]
+            // ── POINT FLOW ──
+            p: [
+                { k: 'f', l: 'フォア', i: '🟦', sub: 'p_shot' },
+                { k: 'b', l: 'バック', i: '🟪', sub: 'p_shot' },
+                { k: 'ace', l: 'サービスエース', i: '🎯' } // Server only
+            ],
+            p_shot: [
+                { k: 'shoot', l: 'シュート', i: '⚡', sub: 'p_course' },
+                { k: 'lob', l: 'ロブ', i: '☁', sub: 'p_course' },
+                { k: 'volley', l: 'ボレー', i: '🛡', sub: 'p_course' },
+                { k: 'smash', l: 'スマッシュ', i: '💥', sub: 'p_course' },
+                { k: 'drop', l: 'ドロップ(ツイスト)', i: '🌀', sub: 'p_course' }
+            ],
+            p_course: [
+                { k: 'cross', l: 'クロス', i: '↖' },
+                { k: 'rev', l: '逆クロス', i: '↗' },
+                { k: 'ctr', l: 'センター', i: '•' },
+                { k: 'str', l: 'ストレート', i: '↑' }
+            ],
+
+            // ── MISS FLOW ──
+            m: [
+                { k: 'f', l: 'フォア', i: '🟦', sub: 'm_shot' },
+                { k: 'b', l: 'バック', i: '🟪', sub: 'm_shot' },
+                { k: 'recv', l: 'レシーブミス', i: '🎾', sub: 'm_recv_hand' } // Receiver only
+            ],
+            
+            // Miss Shot Type
+            m_shot: [
+                { k: 'shoot', l: 'シュート', i: '⚡', sub: 'm_course' },
+                { k: 'lob', l: 'ロブ', i: '☁', sub: 'm_course' },
+                { k: 'volley', l: 'ボレー', i: '🛡', sub: 'm_course' },
+                { k: 'smash', l: 'スマッシュ', i: '💥', sub: 'm_course' },
+                { k: 'drop', l: 'ドロップ(ツイスト)', i: '🌀', sub: 'm_course' }
+            ],
+            // Miss Course
+            m_course: [
+                { k: 'cross', l: 'クロス', i: '↖', sub: 'm_err' },
+                { k: 'rev', l: '逆クロス', i: '↗', sub: 'm_err' },
+                { k: 'ctr', l: 'センター', i: '•', sub: 'm_err' },
+                { k: 'str', l: 'ストレート', i: '↑', sub: 'm_err' }
+            ],
+            // Miss Error Type
+            m_err: [
+                { k: 'bout', l: 'バックアウト', i: '⬆' },
+                { k: 'sout', l: 'サイドアウト', i: '➡' }, 
+                { k: 'net', l: 'ネット', i: '🔴' }
+            ],
+
+            // ── Recv Miss Flow (Simple) ──
+            m_recv_hand: [ { k: 'f', l: 'フォア', i: '🟦', sub: 'm_recv_type' }, { k: 'b', l: 'バック', i: '🟪', sub: 'm_recv_type' } ],
+            m_recv_type: [ { k: 'lob', l: 'ロブ', i: '☁', sub: 'm_recv_course' }, { k: 'shoot', l: 'シュート', i: '⚡', sub: 'm_recv_course' }, { k: 'twist', l: 'ツイスト', i: '🌀', sub: 'm_recv_course' } ], 
+            m_recv_course: [ { k: 'str', l: 'ストレート', i: '↑', sub: 'm_recv_err' }, { k: 'cross', l: 'クロス', i: '↖', sub: 'm_recv_err' }, { k: 'rev', l: '逆クロス', i: '↗', sub: 'm_recv_err' }, { k: 'ctr', l: 'センター', i: '•', sub: 'm_recv_err' } ],
+            m_recv_err: [ { k: 'net', l: 'ネット', i: '🔴' }, { k: 'out', l: 'アウト', i: '➡' } ],
         };
 
         function showSM(type, p, prefix = '') {
             const sm = document.getElementById('sm-body'); sm.innerHTML = '';
             let list = MENUS[type];
-            if (!list) { if (type.startsWith('p_detail_')) list = MENUS['p_detail']; else if (type.startsWith('m_detail_')) list = MENUS['m_detail']; else list = MENUS['p']; }
-            document.getElementById('sm-title').textContent = type.startsWith('p') ? '得点内容' : 'ミス内容';
-            const inf = getServ(); const isS = p === inf.s;
+            // Fallback (if any old references exist)
+            if (!list) { 
+                if (type.startsWith('p_detail_')) list = MENUS['p_shot']; 
+                else if (type.startsWith('m_detail_')) list = MENUS['m_shot']; 
+                else list = MENUS['p']; 
+            }
+            
+            document.getElementById('sm-title').textContent = type.startsWith('p') ? 'ポイント内容' : 'ミス内容';
+            
+            const inf = getServ(); 
+            const isS = p === inf.s;
+            const isR = p === inf.r;
+
             list.forEach(item => {
-                if (item.k === 'ace' && !isS) return;
+                if (item.k === 'ace' && !isS) return; // Hide Ace if not server
+                if (item.k === 'recv' && !isR) return; // Hide Recv if not receiver
+
                 const b = document.createElement('button'); b.className = 'sm-btn';
                 b.innerHTML = `<div style="font-size:1.5rem">${item.i}</div><div style="font-size:0.75rem">${item.l}</div>`;
-                b.onclick = () => { if (item.sub) { showSM(item.sub, p, (item.k === 'f' || item.k === 'b') ? item.k + '_' : prefix); } else { commit(prefix + item.k); } };
+                
+                b.onclick = () => { 
+                    if (item.sub) { 
+                        // Prefix logic: if start of recv, force recv prefix
+                        let nextPre = prefix;
+                        if (item.k === 'recv') nextPre = 'recv_';
+                        else nextPre += item.k + '_';
+                        
+                        showSM(item.sub, p, nextPre); 
+                    } else { 
+                        commit(prefix + item.k); 
+                    } 
+                };
                 sm.appendChild(b);
             });
             
-            // ★変更点: 常に戻る/キャンセルボタンを表示する
             const back = document.createElement('button'); 
             back.className = 'sm-back'; 
             
             if (type === 'p' || type === 'm') {
-                // トップレベル(得点/ミス選択時)なら「キャンセル」として閉じる
                 back.textContent = 'キャンセル (閉じる)'; 
                 back.onclick = () => { document.getElementById('submenu').classList.remove('open'); }; 
             } else {
-                // サブメニューなら「戻る」として親メニューに戻る
                 back.textContent = '戻る'; 
+                // Go back to top
                 back.onclick = () => { showSM(type.startsWith('p') ? 'p' : 'm', p); }; 
             }
             sm.appendChild(back);
@@ -489,8 +591,27 @@
         }
 
         function getLbl(k) {
-            const map = { ace: 'SA', smash: 'Smash', attack: 'Atk', df: 'DF', recv_f: 'F-Recv', recv_b: 'B-Recv', f_shoot_cross: 'F-S.Cr', f_shoot_rev_cross: 'F-S.Rx', f_shoot_str: 'F-S.St', f_shoot_ctr: 'F-S.Ct', f_lob_cross: 'F-L.Cr', f_lob_rev_cross: 'F-L.Rx', f_lob_str: 'F-L.St', f_lob_ctr: 'F-L.Ct', f_volley: 'F-Vly', f_shoot_net: 'F-S.Nt', f_shoot_back: 'F-S.Bk', f_shoot_out_r: 'F-S.OR', f_shoot_out_l: 'F-S.OL', f_lob_back: 'F-L.Bk', f_lob_out_r: 'F-L.OR', f_lob_out_l: 'F-L.OL', b_shoot_cross: 'B-S.Cr', b_shoot_rev_cross: 'B-S.Rx', b_shoot_str: 'B-S.St', b_shoot_ctr: 'B-S.Ct', b_lob_cross: 'B-L.Cr', b_lob_rev_cross: 'B-L.Rx', b_lob_str: 'B-L.St', b_lob_ctr: 'B-L.Ct', b_volley: 'B-Vly', b_shoot_net: 'B-S.Nt', b_shoot_back: 'B-S.Bk', b_shoot_out_r: 'B-S.OR', b_shoot_out_l: 'B-S.OL', b_lob_back: 'B-L.Bk', b_lob_out_r: 'B-L.OR', b_lob_out_l: 'B-L.OL' };
-            return map[k] || k;
+            if (k === 'ace') return 'SA';
+            if (k === 'df') return 'DF';
+            
+            // Dynamic parsing
+            const parts = k.split('_');
+            const dict = {
+                recv: 'R', f: 'F', b: 'B',
+                shoot: 'S', lob: 'L', twist: 'Tw', drop: 'Dr', volley: 'V', smash: 'Sm',
+                str: 'St', cross: 'Cr', rev: 'Rx', ctr: 'Ct',
+                net: 'Nt', out: 'Ot', sout: 'S.Ot', bout: 'B.Ot', back: 'Bk'
+            };
+            
+            // Filter out 'recv' if it's just a prefix and we have detailed parts
+            let validParts = parts;
+            if (parts[0] === 'recv' && parts.length > 1) {
+                 validParts = parts.slice(1);
+                 return 'R-' + validParts.map(p => dict[p] || p).join('-');
+            }
+
+            const short = validParts.map(p => dict[p] || p).join('-');
+            return short;
         }
 
         function drawChart(id, hist, fin) {
@@ -510,18 +631,31 @@
         function downloadJSON() { const b = new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'match_data.json'; a.click(); }
         function resetMatch() { if (confirm('リセットしますか？')) location.reload(); }
 
-        // ── Cloud Send Function ──
-        function sendToCloud() {
-            const btn = document.getElementById('btn-send-cloud');
+        // ── Cloud Send Function (分岐対応版) ──
+        function sendToCloud(type) {
+            let targetUrl = "";
+            let btnId = "";
+            let label = "";
+
+            if (type === 'MEN') {
+                targetUrl = GAS_URL_MEN;
+                btnId = 'btn-send-men';
+                label = "男子";
+            } else {
+                targetUrl = GAS_URL_WOMEN;
+                btnId = 'btn-send-women';
+                label = "女子";
+            }
+
+            const btn = document.getElementById(btnId);
             const originalText = btn.innerHTML;
+            
             btn.innerHTML = "送信中...";
             btn.disabled = true;
 
             const payload = JSON.stringify(S);
 
-            // POST送信 (no-corsモードで送信)
-            // ※ no-corsモードはサーバーからのレスポンス内容を読み取れませんが、送信自体は行われます。
-            fetch(GAS_API_URL, {
+            fetch(targetUrl, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -530,8 +664,7 @@
                 body: payload
             })
             .then(() => {
-                // 送信完了のアラート
-                alert("☁ クラウドにデータを送信しました！\n(スプレッドシートを確認してください)");
+                alert(`☁ ${label}データを送信しました！`);
                 btn.innerHTML = "送信完了";
                 setTimeout(() => { 
                     btn.innerHTML = originalText; 

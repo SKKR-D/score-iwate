@@ -9,7 +9,6 @@
     <style>
         /* ── COLORS & THEME ── */
         :root { --bg: #f0f2f5; --surface: #ffffff; --surface2: #e4e6eb; --border: #b0b3b8; --text: #1a1a1a; --text-dim: #606770; --blue: #0060df; --blue-dim: #eef4ff; --red: #d93025; --red-dim: #ffebee; --gold: #b38600; --gold-bg: #fffbe6; --green: #008a45; --cyan: #008ba3; --app-bg: #e0e0e0; }
-        body.dark-mode { --bg: #0a0e1a; --surface: #131929; --surface2: #1c2540; --border: #2a3a5c; --text: #e8eaf6; --text-dim: #7986cb; --blue: #1e90ff; --blue-dim: #0c3d7a; --red: #ff4060; --red-dim: #7a0c20; --gold: #f5c518; --gold-bg: #3a2800; --green: #00e676; --cyan: #00e5ff; --app-bg: #000000; }
         
         /* Layout */
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
@@ -63,12 +62,10 @@
         .cp { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
         .cm { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
         
-        /* 2列レイアウト調整 */
         .share-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
         .share-btn { padding: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 0.8rem; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 6px; color: var(--text); cursor: pointer; }
         .share-btn:hover { background: var(--surface2); }
         
-        /* Collapsible */
         details.flow-details { margin-bottom: 8px; border: 1px solid var(--border); border-radius: 6px; }
         details.flow-details summary { padding: 8px; font-size: 0.75rem; font-weight: 700; background: var(--surface2); list-style: none; cursor: pointer; text-align: center; }
         .flow-content { padding: 8px; max-height: 150px; overflow-y: auto; }
@@ -90,7 +87,11 @@
         .team-panel { flex: 1; border-radius: 12px; display: flex; flex-direction: column; border: 2px solid transparent; background: var(--surface); position: relative; }
         .team-panel.left { border-color: var(--blue); }
         .team-panel.right { border-color: var(--red); }
+        
+        /* 編集可能な入力フィールドのスタイル */
         .panel-top { padding: 6px; text-align: center; background: rgba(0, 0, 0, 0.03); font-weight: 700; font-size: 0.9rem; flex-shrink: 0; }
+        .seamless-input { border:none; background:transparent; width:100%; text-align:center; font-family:inherit; font-weight:700; font-size:0.9rem; color:inherit; outline:none; padding:0; margin:0; }
+        .seamless-input:focus { background: rgba(255,255,255,0.5); border-radius:4px; }
         
         .point-display { flex: 1; display: flex; align-items: center; justify-content: center; font-family: 'Helvetica World', Helvetica, sans-serif; font-size: clamp(3rem, 35cqi, 12rem); container-type: inline-size; line-height: 1; font-weight: 900; margin: 10px 0; }
         .left .point-display { color: var(--blue); }
@@ -102,8 +103,11 @@
         .p-role { font-size: 0.6rem; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; border-radius: 4px; position: absolute; top: 2px; left: 2px; font-weight: bold; }
         .role-s { background: var(--gold); color: #000; }
         .role-r { background: var(--cyan); color: #000; }
-        .p-name { font-weight: 700; margin-left: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
+        /* プレイヤー名編集用 */
+        .p-name-input { border:none; background:transparent; width:100%; font-family:inherit; font-weight:700; font-size:0.8rem; color:var(--text); outline:none; margin-left:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .p-name-input:focus { background: rgba(0,0,0,0.05); border-radius:2px; }
+
         .active-server { background: #fff9c4 !important; outline: 2px solid #d32f2f !important; border-color: transparent !important; }
         .active-receiver { background: #e3f2fd !important; outline: 2px solid #1976d2 !important; border-color: transparent !important; }
         
@@ -171,6 +175,7 @@
                 <div class="option-group" id="match-opts">
                     <button class="opt-btn" onclick="selMatch(5)">5ゲーム</button>
                     <button class="opt-btn" onclick="selMatch(7)">7ゲーム</button>
+                    <button class="opt-btn" onclick="selMatch(9)">9ゲーム</button>
                 </div>
                 <div class="option-group" id="serve-team-opts">
                     <button class="opt-btn" onclick="selServTeam(0)">🔵 岩手S</button>
@@ -190,7 +195,6 @@
                     <div id="court-diag" style="display:flex; justify-content:center; gap:10px; font-weight:bold;"></div>
                 </div>
                 <button class="confirm-btn" onclick="confirmStep()">ゲーム開始</button>
-                
                 <button id="btn-back-first" class="opt-btn" onclick="step(0)" style="width:100%; margin-top:12px; background:var(--surface); color:var(--text-dim); border:1px solid var(--border);">入力を修正する (戻る)</button>
             </div>
 
@@ -214,11 +218,9 @@
                 <div class="share-row">
                     <button class="share-btn" onclick="downloadJSON()">💾 保存</button>
                     <button class="share-btn" onclick="resetMatch()">🔄 新試合</button>
-                    
                     <button class="share-btn" id="btn-send-men" onclick="sendToCloud('MEN')" style="background:#eef4ff; color:#0060df; border:2px solid #0060df;">☁ 男子データ共有</button>
                     <button class="share-btn" id="btn-send-women" onclick="sendToCloud('WOMEN')" style="background:#ffebee; color:#d93025; border:2px solid #d93025;">☁ 女子データ共有</button>
                 </div>
-
             </div>
         </div>
     </div>
@@ -244,26 +246,26 @@
                 <div class="point-display" id="pt-L">0</div>
                 <div class="players-box">
                     <div class="p-row" id="row-A">
-                        <div class="p-info"><span class="p-role" id="role-A"></span><span class="p-name" id="nm-A"></span></div>
+                        <div class="p-info"><span class="p-role" id="role-A"></span><input class="p-name-input" id="nm-A" readonly></div>
                         <div class="p-btns"><button class="act-btn btn-p" onclick="act('L','A','p')">ポイント</button><button class="act-btn btn-m" onclick="act('L','A','m')">ミス</button></div>
                     </div>
                     <div class="p-row" id="row-B">
-                        <div class="p-info"><span class="p-role" id="role-B"></span><span class="p-name" id="nm-B"></span></div>
+                        <div class="p-info"><span class="p-role" id="role-B"></span><input class="p-name-input" id="nm-B" readonly></div>
                         <div class="p-btns"><button class="act-btn btn-p" onclick="act('L','B','p')">ポイント</button><button class="act-btn btn-m" onclick="act('L','B','m')">ミス</button></div>
                     </div>
                 </div>
             </div>
             <div class="team-panel right">
-                <div class="panel-top" id="tname-R">相手</div>
+                <input class="panel-top seamless-input" id="in-tname-R" value="相手" onchange="updateName('team','R',this.value)">
                 <div style="text-align:center; font-size:0.75rem; color:var(--text-dim); font-weight:bold; margin-top:4px;">ポイントカウント</div>
                 <div class="point-display" id="pt-R">0</div>
                 <div class="players-box">
                     <div class="p-row" id="row-C">
-                        <div class="p-info"><span class="p-role" id="role-C"></span><span class="p-name" id="nm-C"></span></div>
+                        <div class="p-info"><span class="p-role" id="role-C"></span><input class="p-name-input" id="nm-C" onchange="updateName('player','C',this.value)"></div>
                         <div class="p-btns"><button class="act-btn btn-p" onclick="act('R','C','p')">ポイント</button><button class="act-btn btn-m" onclick="act('R','C','m')">ミス</button></div>
                     </div>
                     <div class="p-row" id="row-D">
-                        <div class="p-info"><span class="p-role" id="role-D"></span><span class="p-name" id="nm-D"></span></div>
+                        <div class="p-info"><span class="p-role" id="role-D"></span><input class="p-name-input" id="nm-D" onchange="updateName('player','D',this.value)"></div>
                         <div class="p-btns"><button class="act-btn btn-p" onclick="act('R','D','p')">ポイント</button><button class="act-btn btn-m" onclick="act('R','D','m')">ミス</button></div>
                     </div>
                 </div>
@@ -284,12 +286,9 @@
     </div>
 
     <script>
-        // ── CONFIG ──
-        // ご指定のURLを設定しました
         const GAS_URL_MEN   = "https://script.google.com/macros/s/AKfycbzZ0xMdBjqjihaxjJo1MjkVFoCGWj9vVmoCjycCprf5JS81TS2JWiaCAIKeXXzhs6pt/exec";
         const GAS_URL_WOMEN = "https://script.google.com/macros/s/AKfycbxWQCyueRFKyJZLCI7m7r_nQKbyq3v4NiEIDpC_Fx13pCZ0U-EWcNTgiTRVGtwSdcIM/exec";
 
-        // ── DATA & STATE ──
         let S = {
             maxG: 5, winG: 3, gL: 0, gR: 0, pL: 0, pR: 0, totalP: 0, fault: 0, isFinal: false,
             startTeam: null, curServTeam: null, sOrder: [], rOrder: [],
@@ -302,10 +301,14 @@
         let historyStack = [];
         let setupStep = 0;
 
-        // ── INIT ──
         window.onload = () => { document.getElementById('meta-date').valueAsDate = new Date(); };
 
-        function selMatch(n) { S.maxG = n; S.winG = (n === 5) ? 3 : 4; upBtns('match-opts', n === 5 ? 0 : 1); checkS0(); }
+        function selMatch(n) { 
+            S.maxG = n; 
+            S.winG = (n === 9) ? 5 : (n === 7) ? 4 : 3; 
+            upBtns('match-opts', n === 5 ? 0 : (n === 7 ? 1 : 2)); 
+            checkS0(); 
+        }
         function selServTeam(t) { S.startTeam = t; S.curServTeam = t; upBtns('serve-team-opts', t); checkS0(); }
         function upBtns(id, idx) { const el = document.getElementById(id); if (!el) return; el.querySelectorAll('.opt-btn').forEach((b, i) => b.className = `opt-btn ${i === idx ? (idx === 0 ? 'sel-blue' : (id.includes('serv') ? 'sel-red' : 'sel-gold')) : ''}`); }
         function checkS0() { document.getElementById('btn-start').disabled = !(S.maxG && S.startTeam !== null); }
@@ -317,9 +320,11 @@
                 S.meta.tourney = document.getElementById('meta-tourney').value;
                 S.meta.stage = document.getElementById('meta-stage').value;
                 if(document.getElementById('meta-date').value) S.meta.date = document.getElementById('meta-date').value;
-                
                 S.meta.scorer = document.getElementById('meta-scorer').value;
-
+                
+                document.getElementById('in-tname-R').value = S.teams.R;
+                document.getElementById('nm-C').value = S.names.C;
+                document.getElementById('nm-D').value = S.names.D;
                 step(1);
             } else if (setupStep === 1) {
                 document.getElementById('modal').classList.add('hidden');
@@ -333,12 +338,17 @@
             document.getElementById('step-' + setupStep).style.display = 'block';
             if (n === 1) {
                 buildPos();
-                
                 const backBtn = document.getElementById('btn-back-first');
-                if (backBtn) {
-                    // S.log.length === 0 なら最初のゲームなので戻れるようにする
-                    backBtn.style.display = (S.log.length === 0) ? 'block' : 'none';
-                }
+                if (backBtn) backBtn.style.display = (S.log.length === 0) ? 'block' : 'none';
+            }
+        }
+
+        function updateName(type, id, val) {
+            if (type === 'team') {
+                S.teams[id] = val;
+            } else {
+                S.names[id] = val;
+                document.getElementById('n-' + id).value = val;
             }
         }
 
@@ -387,7 +397,6 @@
                 S.stats[p].m++; 
                 if (sub) {
                     S.stats[p].mt[sub] = (S.stats[p].mt[sub] || 0) + 1;
-                    // ★ GAS互換用: レシーブミス詳細(recv_...)の場合は recv としてもカウントする
                     if (sub.startsWith('recv_')) {
                          S.stats[p].mt['recv'] = (S.stats[p].mt['recv'] || 0) + 1;
                     }
@@ -406,12 +415,20 @@
 
         function checkEnd() {
             const L = S.pL, R = S.pR, fin = S.isFinal;
-            const win = (L >= (fin ? 7 : 4) && L - R >= 2) ? 'L' : (R >= (fin ? 7 : 4) && R - L >= 2) ? 'R' : null;
+            const border = fin ? 7 : 4; 
+            const win = (L >= border && L - R >= 2) ? 'L' : (R >= border && R - L >= 2) ? 'R' : null;
+            
             if (win) {
                 S.log.push({ n: S.gL + S.gR + 1, L: S.pL, R: S.pR, w: win, flow: [...S.hist], fin });
                 win === 'L' ? S.gL++ : S.gR++; S.pL = 0; S.pR = 0; S.totalP = 0; S.hist = [];
                 if (S.gL === S.winG || S.gR === S.winG) showResult();
-                else { S.curServTeam = 1 - S.curServTeam; if ((S.gL + S.gR) === S.maxG - 1) S.isFinal = true; alert((S.gL + S.gR) % 2 !== 0 ? 'チェンジサイズ' : 'チェンジサービス'); step(1); document.getElementById('modal').classList.remove('hidden'); }
+                else { 
+                    S.curServTeam = 1 - S.curServTeam; 
+                    if ((S.gL + S.gR) === S.maxG - 1) S.isFinal = true; 
+                    alert((S.gL + S.gR) % 2 !== 0 ? 'チェンジサイズ' : 'チェンジサービス'); 
+                    step(1); 
+                    document.getElementById('modal').classList.remove('hidden'); 
+                }
             }
         }
 
@@ -423,8 +440,9 @@
             const d = getDisp(S.pL, S.pR, S.isFinal);
             document.getElementById('pt-L').textContent = d.l; document.getElementById('pt-R').textContent = d.r;
             document.getElementById('game-info').textContent = S.isFinal ? 'ファイナル' : `${S.gL + S.gR + 1}ゲーム目`;
+            
             ['A', 'B', 'C', 'D'].forEach(p => {
-                document.getElementById('nm-' + p).textContent = S.names[p];
+                document.getElementById('nm-' + p).value = S.names[p];
                 document.getElementById('role-' + p).className = `p-role ${p === inf.s ? 'role-s' : (p === inf.r ? 'role-r' : '')}`;
                 document.getElementById('role-' + p).textContent = p === inf.s ? 'S' : (p === inf.r ? 'R' : '');
                 const row = document.getElementById('row-' + p);
@@ -432,6 +450,9 @@
                 if (p === inf.s) row.classList.add('active-server');
                 if (p === inf.r) row.classList.add('active-receiver');
             });
+            
+            document.getElementById('in-tname-R').value = S.teams.R;
+
             if (S.fault === 0) { document.getElementById('fault-btn').textContent = "FAULT"; document.getElementById('fault-btn').classList.remove('warn'); }
             drawChart('flow-chart', S.hist, S.isFinal);
         }
@@ -480,11 +501,35 @@
         }
 
         const MENUS = {
-            // ── POINT FLOW ──
-            p: [
+            p_server: [
                 { k: 'f', l: 'フォア', i: '🟦', sub: 'p_shot' },
                 { k: 'b', l: 'バック', i: '🟪', sub: 'p_shot' },
-                { k: 'ace', l: 'サービスエース', i: '🎯' } // Server only
+                { k: 'ace', l: 'サービスエース', i: '🎯', sub: 'p_ace_type' }
+            ],
+            p_receiver: [
+                { k: 'f', l: 'フォア', i: '🟦', sub: 'p_shot' },
+                { k: 'b', l: 'バック', i: '🟪', sub: 'p_shot' },
+                { k: 'ace', l: 'レシーブエース', i: '⚡', sub: 'r_ace_shot' }
+            ],
+            p_standard: [
+                { k: 'f', l: 'フォア', i: '🟦', sub: 'p_shot' },
+                { k: 'b', l: 'バック', i: '🟪', sub: 'p_shot' }
+            ],
+            p_ace_type: [
+                { k: 'overhead', l: 'オーバーヘッド', i: '⬆' },
+                { k: 'undercut', l: 'アンダーカット', i: '⬇' },
+                { k: 'other_input', l: 'その他(入力)', i: '🖊', custom: true }
+            ],
+            r_ace_shot: [
+                { k: 'shoot', l: 'シュート', i: '⚡', sub: 'r_ace_course' },
+                { k: 'lob', l: 'ロブ', i: '☁', sub: 'r_ace_course' },
+                { k: 'twist', l: 'ツイスト', i: '🌀', sub: 'r_ace_course' }
+            ],
+            r_ace_course: [
+                { k: 'cross', l: 'クロス', i: '↖' },
+                { k: 'rev', l: '逆クロス', i: '↗' },
+                { k: 'ctr', l: 'センター', i: '•' },
+                { k: 'str', l: 'ストレート', i: '↑' }
             ],
             p_shot: [
                 { k: 'shoot', l: 'シュート', i: '⚡', sub: 'p_course' },
@@ -499,15 +544,11 @@
                 { k: 'ctr', l: 'センター', i: '•' },
                 { k: 'str', l: 'ストレート', i: '↑' }
             ],
-
-            // ── MISS FLOW ──
             m: [
                 { k: 'f', l: 'フォア', i: '🟦', sub: 'm_shot' },
                 { k: 'b', l: 'バック', i: '🟪', sub: 'm_shot' },
-                { k: 'recv', l: 'レシーブミス', i: '🎾', sub: 'm_recv_hand' } // Receiver only
+                { k: 'recv', l: 'レシーブミス', i: '🎾', sub: 'm_recv_hand' }
             ],
-            
-            // Miss Shot Type
             m_shot: [
                 { k: 'shoot', l: 'シュート', i: '⚡', sub: 'm_course' },
                 { k: 'lob', l: 'ロブ', i: '☁', sub: 'm_course' },
@@ -515,21 +556,17 @@
                 { k: 'smash', l: 'スマッシュ', i: '💥', sub: 'm_course' },
                 { k: 'drop', l: 'ドロップ(ツイスト)', i: '🌀', sub: 'm_course' }
             ],
-            // Miss Course
             m_course: [
                 { k: 'cross', l: 'クロス', i: '↖', sub: 'm_err' },
                 { k: 'rev', l: '逆クロス', i: '↗', sub: 'm_err' },
                 { k: 'ctr', l: 'センター', i: '•', sub: 'm_err' },
                 { k: 'str', l: 'ストレート', i: '↑', sub: 'm_err' }
             ],
-            // Miss Error Type
             m_err: [
                 { k: 'bout', l: 'バックアウト', i: '⬆' },
                 { k: 'sout', l: 'サイドアウト', i: '➡' }, 
                 { k: 'net', l: 'ネット', i: '🔴' }
             ],
-
-            // ── Recv Miss Flow (Simple) ──
             m_recv_hand: [ { k: 'f', l: 'フォア', i: '🟦', sub: 'm_recv_type' }, { k: 'b', l: 'バック', i: '🟪', sub: 'm_recv_type' } ],
             m_recv_type: [ { k: 'lob', l: 'ロブ', i: '☁', sub: 'm_recv_course' }, { k: 'shoot', l: 'シュート', i: '⚡', sub: 'm_recv_course' }, { k: 'twist', l: 'ツイスト', i: '🌀', sub: 'm_recv_course' } ], 
             m_recv_course: [ { k: 'str', l: 'ストレート', i: '↑', sub: 'm_recv_err' }, { k: 'cross', l: 'クロス', i: '↖', sub: 'm_recv_err' }, { k: 'rev', l: '逆クロス', i: '↗', sub: 'm_recv_err' }, { k: 'ctr', l: 'センター', i: '•', sub: 'm_recv_err' } ],
@@ -538,34 +575,46 @@
 
         function showSM(type, p, prefix = '') {
             const sm = document.getElementById('sm-body'); sm.innerHTML = '';
-            let list = MENUS[type];
-            // Fallback (if any old references exist)
-            if (!list) { 
+            
+            let list;
+            const inf = getServ(); 
+            const isServer = (p === inf.s);
+            const isReceiver = (p === inf.r);
+
+            if (type === 'p') {
+                if (isServer) {
+                    list = MENUS['p_server'];
+                } else if (isReceiver) {
+                    list = MENUS['p_receiver'];
+                } else {
+                    list = MENUS['p_standard'];
+                }
+            } else if (MENUS[type]) {
+                list = MENUS[type];
+            } else {
                 if (type.startsWith('p_detail_')) list = MENUS['p_shot']; 
                 else if (type.startsWith('m_detail_')) list = MENUS['m_shot']; 
-                else list = MENUS['p']; 
+                else list = MENUS['p_server']; 
             }
             
             document.getElementById('sm-title').textContent = type.startsWith('p') ? 'ポイント内容' : 'ミス内容';
             
-            const inf = getServ(); 
-            const isS = p === inf.s;
-            const isR = p === inf.r;
-
             list.forEach(item => {
-                if (item.k === 'ace' && !isS) return; // Hide Ace if not server
-                if (item.k === 'recv' && !isR) return; // Hide Recv if not receiver
+                if (item.k === 'recv' && !isReceiver) return; 
 
                 const b = document.createElement('button'); b.className = 'sm-btn';
                 b.innerHTML = `<div style="font-size:1.5rem">${item.i}</div><div style="font-size:0.75rem">${item.l}</div>`;
                 
                 b.onclick = () => { 
-                    if (item.sub) { 
-                        // Prefix logic: if start of recv, force recv prefix
+                    if (item.custom) {
+                        const val = prompt("内容を入力してください");
+                        if (val) {
+                            commit(prefix + "other_" + val);
+                        }
+                    } else if (item.sub) { 
                         let nextPre = prefix;
                         if (item.k === 'recv') nextPre = 'recv_';
                         else nextPre += item.k + '_';
-                        
                         showSM(item.sub, p, nextPre); 
                     } else { 
                         commit(prefix + item.k); 
@@ -582,8 +631,7 @@
                 back.onclick = () => { document.getElementById('submenu').classList.remove('open'); }; 
             } else {
                 back.textContent = '戻る'; 
-                // Go back to top
-                back.onclick = () => { showSM(type.startsWith('p') ? 'p' : 'm', p); }; 
+                back.onclick = () => { showSM(type.startsWith('p') || type.startsWith('r_ace') ? 'p' : 'm', p); }; 
             }
             sm.appendChild(back);
             
@@ -594,16 +642,15 @@
             if (k === 'ace') return 'SA';
             if (k === 'df') return 'DF';
             
-            // Dynamic parsing
             const parts = k.split('_');
             const dict = {
                 recv: 'R', f: 'F', b: 'B',
                 shoot: 'S', lob: 'L', twist: 'Tw', drop: 'Dr', volley: 'V', smash: 'Sm',
                 str: 'St', cross: 'Cr', rev: 'Rx', ctr: 'Ct',
-                net: 'Nt', out: 'Ot', sout: 'S.Ot', bout: 'B.Ot', back: 'Bk'
+                net: 'Nt', out: 'Ot', sout: 'S.Ot', bout: 'B.Ot', back: 'Bk',
+                overhead: 'Ov', undercut: 'Un', other: 'Etc'
             };
             
-            // Filter out 'recv' if it's just a prefix and we have detailed parts
             let validParts = parts;
             if (parts[0] === 'recv' && parts.length > 1) {
                  validParts = parts.slice(1);
@@ -619,7 +666,8 @@
             const ctx = cvs.getContext('2d'); const dpr = window.devicePixelRatio || 1; const rect = cvs.getBoundingClientRect();
             cvs.width = rect.width * dpr; cvs.height = rect.height * dpr; ctx.scale(dpr, dpr);
             const w = rect.width; const h = rect.height; const pts = [0]; let c = 0; hist.forEach(x => { c += (x === 'L' ? 1 : -1); pts.push(c); });
-            const absMax = Math.max(fin ? 7 : 4, ...pts.map(Math.abs)); const mid = h / 2; const sc = (mid - 6) / absMax; const step = (w - 10) / (pts.length || 1);
+            const absMax = Math.max(fin ? 9 : 5, ...pts.map(Math.abs)); 
+            const mid = h / 2; const sc = (mid - 6) / absMax; const step = (w - 10) / (pts.length || 1);
             ctx.beginPath(); ctx.strokeStyle = '#ccc'; ctx.moveTo(0, mid); ctx.lineTo(w, mid); ctx.stroke();
             ctx.beginPath(); ctx.strokeStyle = '#888'; ctx.lineWidth = 2;
             pts.forEach((y, x) => { x === 0 ? ctx.moveTo(5, mid - y * sc) : ctx.lineTo(5 + x * step, mid - y * sc); });
@@ -631,7 +679,6 @@
         function downloadJSON() { const b = new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'match_data.json'; a.click(); }
         function resetMatch() { if (confirm('リセットしますか？')) location.reload(); }
 
-        // ── Cloud Send Function (分岐対応版) ──
         function sendToCloud(type) {
             let targetUrl = "";
             let btnId = "";
@@ -649,7 +696,6 @@
 
             const btn = document.getElementById(btnId);
             const originalText = btn.innerHTML;
-            
             btn.innerHTML = "送信中...";
             btn.disabled = true;
 
@@ -658,18 +704,13 @@
             fetch(targetUrl, {
                 method: 'POST',
                 mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'text/plain'
-                },
+                headers: { 'Content-Type': 'text/plain' },
                 body: payload
             })
             .then(() => {
                 alert(`☁ ${label}データを送信しました！`);
                 btn.innerHTML = "送信完了";
-                setTimeout(() => { 
-                    btn.innerHTML = originalText; 
-                    btn.disabled = false; 
-                }, 3000);
+                setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 3000);
             })
             .catch(error => {
                 console.error('Error:', error);

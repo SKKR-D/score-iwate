@@ -19,6 +19,15 @@
 
         .scoreboard { width: 100%; max-width: 600px; background: var(--surface); border-left: 1px solid var(--border); border-right: 1px solid var(--border); min-height: 100vh; display: flex; flex-direction: column; transition: max-width 0.3s; }
 
+        /* ★ 追加：ダッシュボードに戻るボタン */
+        .back-dash-btn {
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+            background: #1f2937; color: var(--gold); padding: 12px;
+            font-size: 0.9rem; font-weight: 900; text-decoration: none;
+            border-bottom: 1px solid var(--border); transition: 0.2s;
+        }
+        .back-dash-btn:hover { background: #374151; color: #fff; }
+
         /* ── COURT NAVIGATION ── */
         .court-nav { display: flex; overflow-x: auto; gap: 8px; padding: 12px 10px; background: #000; border-bottom: 1px solid var(--border); scrollbar-width: none; -webkit-overflow-scrolling: touch; }
         .court-nav::-webkit-scrollbar { display: none; }
@@ -100,6 +109,10 @@
 <body>
 
     <div class="scoreboard">
+        <a href="dashboard.html" class="back-dash-btn">
+            <span>🔙 全コート一覧（ダッシュボード）に戻る</span>
+        </a>
+
         <div class="court-nav" id="v-court-nav"></div>
 
         <div id="loading-screen">
@@ -173,7 +186,11 @@
             { id: 'ken_1', text: '1' }, { id: 'ken_2', text: '2' }
         ];
 
-        let currentCourtId = 'ise_1';
+        // ★ 追加：URLのパラメータ（?court=〇〇）を読み取って、初期コートを決定する
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlCourt = urlParams.get('court');
+        let currentCourtId = urlCourt ? urlCourt : 'ise_1';
+        
         let lastDataString = "";
         let fetchTimer = null;
 
@@ -201,11 +218,18 @@
                     nav.appendChild(btn);
                 }
             });
+
+            // ★ 追加：初期ロード時に、選択されたコートのタブが見える位置まで自動で横スクロールする
+            setTimeout(() => {
+                const activeBtn = nav.querySelector('.court-btn.active');
+                if (activeBtn) activeBtn.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
+            }, 100);
         }
 
         function changeCourt(courtId, clickedBtn) {
             currentCourtId = courtId;
             
+            // URLの履歴は変更しないまま、見た目だけ切り替える
             document.querySelectorAll('.court-btn').forEach(b => b.classList.remove('active'));
             clickedBtn.classList.add('active');
             
@@ -268,7 +292,6 @@
             document.getElementById('v-status').textContent = "自動更新中";
             document.getElementById('v-status').style.color = "var(--text-dim)";
 
-            // ★ 今回の修正：大会名と回戦（ステージ）を「｜」で繋いで表示
             const tourneyName = S.meta.tourney || '大会';
             const stageName = S.meta.stage ? ` ｜ ${S.meta.stage}` : '';
             document.getElementById('v-tourney').textContent = `[${getCourtFullName(currentCourtId)}] ${tourneyName}${stageName}`;

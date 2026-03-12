@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>岩手選抜スコアブック</title>
+    <title>岩手選抜スコアブック(統合版)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Noto+Sans+JP:wght@400;700;900&family=Yuji+Syuku&display=swap" rel="stylesheet">
     <style>
@@ -27,7 +27,7 @@
         /* Inputs */
         .match-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
         .full-width { grid-column: span 2; }
-        .input-label { font-size: 0.7rem; color: var(--text-dim); margin-bottom: 4px; display: block; }
+        .input-label { font-size: 0.7rem; color: var(--text-dim); margin-bottom: 4px; display: block; font-weight: bold; }
         .name-input { width: 100%; padding: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.95rem; }
         
         .option-group { display: flex; gap: 6px; margin-bottom: 12px; }
@@ -36,6 +36,7 @@
         .opt-btn.sel-gold { background: var(--gold-bg); border-color: var(--gold); color: var(--gold); }
         .opt-btn.sel-blue { background: var(--blue); border-color: var(--blue); color: #fff; }
         .opt-btn.sel-red { background: var(--red); border-color: var(--red); color: #fff; }
+        .opt-btn.sel-green { background: var(--green); border-color: var(--green); color: #fff; }
         
         .confirm-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--blue), #0060cc); border: none; border-radius: 10px; color: #fff; font-family: 'Orbitron', sans-serif; font-size: 1rem; font-weight: 700; margin-top: 8px; cursor: pointer; transition: 0.2s; }
         .confirm-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0, 96, 223, 0.3); }
@@ -55,6 +56,7 @@
         .ct-name { text-align: left; padding-left: 6px; max-width: 80px; overflow: hidden; white-space: nowrap; }
         
         .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+        .detail-grid.singles-mode { grid-template-columns: 1fr; }
         .d-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px; overflow: hidden; }
         .dc-head { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 900; margin-bottom: 4px; border-bottom: 1px solid var(--border); padding-bottom: 2px; }
         .dc-body { font-size: 0.65rem; line-height: 1.3; min-height: 3.6em; }
@@ -64,7 +66,10 @@
         
         .share-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
         .share-btn { padding: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 0.8rem; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 6px; color: var(--text); cursor: pointer; }
-        .share-btn:hover { background: var(--surface2); }
+        .share-btn:hover:not(:disabled) { background: var(--surface2); }
+        .share-btn-primary { grid-column: span 2; background: linear-gradient(135deg, var(--green), #006b36); color: white; font-size: 1rem; padding: 14px; border: none; }
+        .share-btn-primary:hover:not(:disabled) { box-shadow: 0 4px 10px rgba(0, 138, 69, 0.3); transform: translateY(-1px); }
+        .share-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         
         details.flow-details { margin-bottom: 8px; border: 1px solid var(--border); border-radius: 6px; }
         details.flow-details summary { padding: 8px; font-size: 0.75rem; font-weight: 700; background: var(--surface2); list-style: none; cursor: pointer; text-align: center; }
@@ -88,7 +93,6 @@
         .team-panel.left { border-color: var(--blue); }
         .team-panel.right { border-color: var(--red); }
         
-        /* 編集可能な入力フィールドのスタイル */
         .panel-top { padding: 6px; text-align: center; background: rgba(0, 0, 0, 0.03); font-weight: 700; font-size: 0.9rem; flex-shrink: 0; }
         .seamless-input { border:none; background:transparent; width:100%; text-align:center; font-family:inherit; font-weight:700; font-size:0.9rem; color:inherit; outline:none; padding:0; margin:0; }
         .seamless-input:focus { background: rgba(255,255,255,0.5); border-radius:4px; }
@@ -97,14 +101,13 @@
         .left .point-display { color: var(--blue); }
         .right .point-display { color: var(--red); }
         
-        .players-box { display: flex; flex-direction: column; gap: 4px; padding: 6px; background: var(--surface2); }
+        .players-box { display: flex; flex-direction: column; gap: 4px; padding: 6px; background: var(--surface2); flex: 1; justify-content: flex-end;}
         .p-row { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; height: 56px; }
         .p-info { width: 35%; padding: 4px; display: flex; flex-direction: column; justify-content: center; font-size: 0.75rem; border-right: 1px solid var(--border); position: relative; }
         .p-role { font-size: 0.6rem; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; border-radius: 4px; position: absolute; top: 2px; left: 2px; font-weight: bold; }
         .role-s { background: var(--gold); color: #000; }
         .role-r { background: var(--cyan); color: #000; }
         
-        /* プレイヤー名編集用 */
         .p-name-input { border:none; background:transparent; width:100%; font-family:inherit; font-weight:700; font-size:0.8rem; color:var(--text); outline:none; margin-left:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .p-name-input:focus { background: rgba(0,0,0,0.05); border-radius:2px; }
 
@@ -139,19 +142,35 @@
         .sm-btn:hover { filter: brightness(0.95); transform: scale(1.02); }
         .sm-back { grid-column: span 2; padding: 10px; background: transparent; border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; }
         
-        /* Toast */
-        .toast { position: fixed; top: 100px; left: 50%; transform: translate(-50%, -20px); background: rgba(0, 0, 0, 0.8); color: #fff; padding: 8px 16px; border-radius: 20px; opacity: 0; transition: .3s; pointer-events: none; font-size: 0.85rem; z-index: 300; }
-        .toast.show { opacity: 1; transform: translate(-50%, 0); }
-        
         @media (max-width: 600px) { body { background: var(--bg); } .app { border-radius: 0; box-shadow: none; } }
     </style>
 </head>
 <body>
     <div id="modal" class="modal-overlay">
         <div class="modal-card">
+            
             <div id="step-0">
-                <h1 style="text-align: center; background: linear-gradient(135deg, #ff7b00, #ffc107); -webkit-background-clip: text; background-clip: text; color: transparent; font-family: 'S Motoya Daikai', 'Sモトヤ大楷', 'Yuji Syuku', serif; font-size: clamp(1.5rem, 11vw, 3.2rem); white-space: nowrap; font-weight: 900; margin-bottom: 20px; letter-spacing: 0px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3)); line-height: 1.2;">もえあがれ 岩手！</h1>
+                <h1 style="text-align: center; background: linear-gradient(135deg, #ff7b00, #ffc107); -webkit-background-clip: text; background-clip: text; color: transparent; font-family: 'S Motoya Daikai', 'Sモトヤ大楷', 'Yuji Syuku', serif; font-size: clamp(1.5rem, 11vw, 3.2rem); white-space: nowrap; font-weight: 900; margin-bottom: 5px; letter-spacing: 0px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3)); line-height: 1.2;">もえあがれ 岩手！</h1>
+                <p style="text-align: center; color: var(--text-dim); font-size: 0.8rem; margin-bottom:20px;">統合版スコアシステム</p>
+                
+                <p class="input-label">📌 性別</p>
+                <div class="option-group" id="gender-opts">
+                    <button class="opt-btn" onclick="selGender('男子')">男子</button>
+                    <button class="opt-btn" onclick="selGender('女子')">女子</button>
+                </div>
+                
+                <p class="input-label">📌 種目</p>
+                <div class="option-group" id="type-opts">
+                    <button class="opt-btn" onclick="selMatchType('シングルス')">シングルス</button>
+                    <button class="opt-btn" onclick="selMatchType('ダブルス')">ダブルス</button>
+                </div>
+                
+                <button class="confirm-btn" id="btn-next-0" onclick="goToStep1()" disabled>設定へ進む</button>
+            </div>
+
+            <div id="step-1" style="display:none;">
                 <div class="step-bar"> <div class="step-dot active"></div> <div class="step-dot"></div> </div>
+                <div style="text-align:center; font-weight:bold; color:var(--blue); margin-bottom:10px;" id="disp-mode-label"></div>
                 
                 <p class="input-label">大会情報</p>
                 <div class="match-info-grid">
@@ -168,25 +187,34 @@
                 <p class="input-label">選手登録</p>
                 <div class="match-info-grid">
                     <div class="full-width" style="color:var(--blue); font-weight:bold; font-size:0.8rem;">🔵 自チーム (岩手選抜)</div>
-                    <input class="name-input" id="n-A" value="選手A" placeholder="後衛"><input class="name-input" id="n-B" value="選手B" placeholder="前衛">
+                    <div class="full-width" id="wrap-nA"><input class="name-input" id="n-A" value="選手A" placeholder="後衛"></div>
+                    <div class="full-width" id="wrap-nB"><input class="name-input" id="n-B" value="選手B" placeholder="前衛"></div>
+                    
                     <div class="full-width" style="color:var(--red); font-weight:bold; font-size:0.8rem; margin-top:4px;">🔴 相手チーム <input id="team-r-name" placeholder="チーム名" style="width:100px; font-size:0.8rem; border:none; background:transparent; color: var(--text);"></div>
-                    <input class="name-input" id="n-C" value="選手C"><input class="name-input" id="n-D" value="選手D">
+                    <div class="full-width" id="wrap-nC"><input class="name-input" id="n-C" value="選手C" placeholder="後衛"></div>
+                    <div class="full-width" id="wrap-nD"><input class="name-input" id="n-D" value="選手D" placeholder="前衛"></div>
                 </div>
+                
+                <p class="input-label">ゲーム数</p>
                 <div class="option-group" id="match-opts">
                     <button class="opt-btn" onclick="selMatch(5)">5ゲーム</button>
                     <button class="opt-btn" onclick="selMatch(7)">7ゲーム</button>
-                    <button class="opt-btn" onclick="selMatch(9)">9ゲーム</button>
+                    <button class="opt-btn" id="btn-9game" onclick="selMatch(9)">9ゲーム</button>
                 </div>
+                
+                <p class="input-label">第1ゲーム サーバー</p>
                 <div class="option-group" id="serve-team-opts">
                     <button class="opt-btn" onclick="selServTeam(0)">🔵 岩手S</button>
                     <button class="opt-btn" onclick="selServTeam(1)">🔴 相手S</button>
                 </div>
-                <button class="confirm-btn" id="btn-start" onclick="confirmStep()" disabled>次へ</button>
+                
+                <button class="confirm-btn" id="btn-next-1" onclick="confirmStep1()" disabled>次へ</button>
+                <button class="opt-btn" onclick="step(0)" style="width:100%; margin-top:10px; border:none; background:transparent;">← 種目選択に戻る</button>
             </div>
-            
-            <div id="step-1" style="display:none;">
+
+            <div id="step-2" style="display:none;">
                 <div class="step-bar"> <div class="step-dot"></div> <div class="step-dot active"></div> </div>
-                <p style="text-align:center; margin-bottom:10px; font-size:0.9rem;">ポジション確認</p>
+                <p style="text-align:center; margin-bottom:10px; font-size:0.9rem;">第1ゲーム ポジション確認</p>
                 <p class="input-label">🎾 サーバー</p>
                 <div class="option-group" id="server-opts"></div>
                 <p class="input-label">↗ レシーバー</p>
@@ -194,11 +222,11 @@
                 <div style="background:var(--surface2); padding:10px; border-radius:8px; text-align:center; font-size:0.8rem; margin:10px 0;">
                     <div id="court-diag" style="display:flex; justify-content:center; gap:10px; font-weight:bold;"></div>
                 </div>
-                <button class="confirm-btn" onclick="confirmStep()">ゲーム開始</button>
-                <button id="btn-back-first" class="opt-btn" onclick="step(0)" style="width:100%; margin-top:12px; background:var(--surface); color:var(--text-dim); border:1px solid var(--border);">入力を修正する (戻る)</button>
+                <button class="confirm-btn" onclick="confirmStep2()">ゲーム開始</button>
+                <button class="opt-btn" onclick="step(1)" style="width:100%; margin-top:10px; border:none; background:transparent;">← 設定に戻る</button>
             </div>
 
-            <div id="step-2" style="display:none;">
+            <div id="step-3" style="display:none;">
                 <div class="result-header">
                     <div><div class="rh-title">WINNER</div><div class="rh-winner" id="winner-name">岩手</div></div>
                     <div class="rh-score" id="winner-score">4 - 2</div>
@@ -216,10 +244,10 @@
                 </details>
                 
                 <div class="share-row">
-                    <button class="share-btn" onclick="downloadJSON()">💾 保存</button>
-                    <button class="share-btn" onclick="resetMatch()">🔄 新試合</button>
-                    <button class="share-btn" id="btn-send-men" onclick="sendToCloud('MEN')" style="background:#eef4ff; color:#0060df; border:2px solid #0060df;">☁ 男子データ共有</button>
-                    <button class="share-btn" id="btn-send-women" onclick="sendToCloud('WOMEN')" style="background:#ffebee; color:#d93025; border:2px solid #d93025;">☁ 女子データ共有</button>
+                    <button class="share-btn share-btn-primary" id="btn-send-integrated" onclick="sendToCloud()">☁ データを送信する</button>
+                    
+                    <button class="share-btn" onclick="downloadJSON()">💾 バックアップ保存</button>
+                    <button class="share-btn" onclick="resetMatch()">🔄 新しい試合を入力</button>
                 </div>
             </div>
         </div>
@@ -242,7 +270,7 @@
         <div class="score-area">
             <div class="team-panel left">
                 <div class="panel-top" id="tname-L">岩手</div>
-                <div style="text-align:center; font-size:0.75rem; color:var(--text-dim); font-weight:bold; margin-top:4px;">ポイントカウント</div>
+                <div style="text-align:center; font-size:0.75rem; color:var(--text-dim); font-weight:bold; margin-top:4px;">ポイント</div>
                 <div class="point-display" id="pt-L">0</div>
                 <div class="players-box">
                     <div class="p-row" id="row-A">
@@ -257,7 +285,7 @@
             </div>
             <div class="team-panel right">
                 <input class="panel-top seamless-input" id="in-tname-R" value="相手" onchange="updateName('team','R',this.value)">
-                <div style="text-align:center; font-size:0.75rem; color:var(--text-dim); font-weight:bold; margin-top:4px;">ポイントカウント</div>
+                <div style="text-align:center; font-size:0.75rem; color:var(--text-dim); font-weight:bold; margin-top:4px;">ポイント</div>
                 <div class="point-display" id="pt-R">0</div>
                 <div class="players-box">
                     <div class="p-row" id="row-C">
@@ -277,7 +305,7 @@
             <button class="fault-btn" id="fault-btn" onclick="handleFault()">FAULT</button>
         </div>
     </div>
-    <div class="toast" id="toast">Message</div>
+
     <div class="submenu-overlay" id="submenu">
         <div class="submenu-sheet">
             <div style="text-align:center; font-weight:bold; margin-bottom:10px;" id="sm-title">詳細</div>
@@ -286,72 +314,89 @@
     </div>
 
     <script>
-        const GAS_URL_MEN   = "https://script.google.com/macros/s/AKfycbzZ0xMdBjqjihaxjJo1MjkVFoCGWj9vVmoCjycCprf5JS81TS2JWiaCAIKeXXzhs6pt/exec";
-        const GAS_URL_WOMEN = "https://script.google.com/macros/s/AKfycbxWQCyueRFKyJZLCI7m7r_nQKbyq3v4NiEIDpC_Fx13pCZ0U-EWcNTgiTRVGtwSdcIM/exec";
+        // ★ ここに新しく統合したGASのURLを1つだけ設定します
+        const GAS_URL_INTEGRATED = "https://script.google.com/macros/s/AKfycbz8Loewwq20edBWx0dB0ZUwWFms4iN9oe3Vrm6Nf0cRMgzRqTiLNVfbEU1DTrlnLHm_Jg/exec";
 
         let S = {
             maxG: 5, winG: 3, gL: 0, gR: 0, pL: 0, pR: 0, totalP: 0, fault: 0, isFinal: false,
             startTeam: null, curServTeam: null, sOrder: [], rOrder: [],
+            meta: { gender: '', matchType: '', tourney: '', stage: '', date: '', scorer: '' },
             names: { A: '選手A', B: '選手B', C: '選手C', D: '選手D' },
             teams: { L: '岩手', R: '相手' },
-            meta: { tourney: '', stage: '', date: '', scorer: '' },
             stats: { A: { p: 0, m: 0, fi: 0, st: 0, pt: {}, mt: {} }, B: { p: 0, m: 0, fi: 0, st: 0, pt: {}, mt: {} }, C: { p: 0, m: 0, fi: 0, st: 0, pt: {}, mt: {} }, D: { p: 0, m: 0, fi: 0, st: 0, pt: {}, mt: {} } },
             hist: [], log: []
         };
         let historyStack = [];
         let setupStep = 0;
+        let isMatchStarted = false;
 
         window.onload = () => { document.getElementById('meta-date').valueAsDate = new Date(); };
 
-        function selMatch(n) { 
-            S.maxG = n; 
-            S.winG = (n === 9) ? 5 : (n === 7) ? 4 : 3; 
-            upBtns('match-opts', n === 5 ? 0 : (n === 7 ? 1 : 2)); 
-            checkS0(); 
-        }
-        function selServTeam(t) { S.startTeam = t; S.curServTeam = t; upBtns('serve-team-opts', t); checkS0(); }
-        function upBtns(id, idx) { const el = document.getElementById(id); if (!el) return; el.querySelectorAll('.opt-btn').forEach((b, i) => b.className = `opt-btn ${i === idx ? (idx === 0 ? 'sel-blue' : (id.includes('serv') ? 'sel-red' : 'sel-gold')) : ''}`); }
-        function checkS0() { document.getElementById('btn-start').disabled = !(S.maxG && S.startTeam !== null); }
-        
-        function confirmStep() {
-            if (setupStep === 0) {
-                ['A', 'B', 'C', 'D'].forEach(p => S.names[p] = document.getElementById('n-' + p).value || S.names[p]);
-                S.teams.R = document.getElementById('team-r-name').value || '相手';
-                S.meta.tourney = document.getElementById('meta-tourney').value;
-                S.meta.stage = document.getElementById('meta-stage').value;
-                if(document.getElementById('meta-date').value) S.meta.date = document.getElementById('meta-date').value;
-                S.meta.scorer = document.getElementById('meta-scorer').value;
-                
-                document.getElementById('in-tname-R').value = S.teams.R;
-                document.getElementById('nm-C').value = S.names.C;
-                document.getElementById('nm-D').value = S.names.D;
-                step(1);
-            } else if (setupStep === 1) {
-                document.getElementById('modal').classList.add('hidden');
-                update();
+        // 誤操作によるページ離脱（リロード）を防止する機能
+        window.addEventListener('beforeunload', function (e) {
+            if (isMatchStarted) {
+                e.preventDefault();
+                e.returnValue = '';
             }
-        }
+        });
+
+        /* --- STEP 0: 種別選択 --- */
+        function selGender(g) { S.meta.gender = g; upBtns('gender-opts', g === '男子' ? 0 : 1); checkS0(); }
+        function selMatchType(t) { S.meta.matchType = t; upBtns('type-opts', t === 'シングルス' ? 0 : 1); checkS0(); }
+        function checkS0() { document.getElementById('btn-next-0').disabled = !(S.meta.gender && S.meta.matchType); }
         
-        function step(n) {
-            document.getElementById('step-' + setupStep).style.display = 'none';
-            setupStep = n;
-            document.getElementById('step-' + setupStep).style.display = 'block';
-            if (n === 1) {
-                buildPos();
-                const backBtn = document.getElementById('btn-back-first');
-                if (backBtn) backBtn.style.display = (S.log.length === 0) ? 'block' : 'none';
-            }
+        function goToStep1() {
+            const isSingles = (S.meta.matchType === 'シングルス');
+            
+            // 画面表示の切り替え
+            document.getElementById('disp-mode-label').textContent = `【 ${S.meta.gender} ${S.meta.matchType} 】`;
+            document.getElementById('wrap-nB').style.display = isSingles ? 'none' : 'block';
+            document.getElementById('wrap-nD').style.display = isSingles ? 'none' : 'block';
+            document.getElementById('n-A').placeholder = isSingles ? '選手名' : '後衛';
+            document.getElementById('n-C').placeholder = isSingles ? '選手名' : '後衛';
+            
+            // 9ゲームの表示切替（シングルスは9ゲーム非表示）
+            document.getElementById('btn-9game').style.display = isSingles ? 'none' : 'block';
+            if (isSingles && S.maxG === 9) selMatch(5); // もし9ゲームを選択中にシングルスに変えたら5にリセット
+            
+            // 次のボタンのテキスト変更
+            document.getElementById('btn-next-1').textContent = isSingles ? "ゲーム開始" : "ポジション設定へ";
+            
+            step(1);
         }
 
-        function updateName(type, id, val) {
-            if (type === 'team') {
-                S.teams[id] = val;
+        /* --- STEP 1: 詳細設定 --- */
+        function selMatch(n) { S.maxG = n; S.winG = (n === 9) ? 5 : (n === 7) ? 4 : 3; upBtns('match-opts', n === 5 ? 0 : (n === 7 ? 1 : 2)); checkS1(); }
+        function selServTeam(t) { S.startTeam = t; S.curServTeam = t; upBtns('serve-team-opts', t); checkS1(); }
+        function checkS1() { document.getElementById('btn-next-1').disabled = !(S.maxG && S.startTeam !== null); }
+        function upBtns(id, idx) { const el = document.getElementById(id); if (!el) return; el.querySelectorAll('.opt-btn').forEach((b, i) => b.className = `opt-btn ${i === idx ? (idx === 0 ? 'sel-blue' : (id.includes('serv') ? 'sel-red' : (id.includes('opts') ? 'sel-green' : 'sel-gold'))) : ''}`); }
+
+        function confirmStep1() {
+            S.meta.tourney = document.getElementById('meta-tourney').value;
+            S.meta.stage = document.getElementById('meta-stage').value;
+            if(document.getElementById('meta-date').value) S.meta.date = document.getElementById('meta-date').value;
+            S.meta.scorer = document.getElementById('meta-scorer').value;
+            S.teams.R = document.getElementById('team-r-name').value || '相手';
+            
+            // 選手名の保存
+            ['A', 'C'].forEach(p => S.names[p] = document.getElementById('n-' + p).value || S.names[p]);
+            if (S.meta.matchType === 'ダブルス') {
+                ['B', 'D'].forEach(p => S.names[p] = document.getElementById('n-' + p).value || S.names[p]);
+            }
+
+            document.getElementById('in-tname-R').value = S.teams.R;
+            document.getElementById('nm-C').value = S.names.C;
+            if(S.meta.matchType === 'ダブルス') document.getElementById('nm-D').value = S.names.D;
+
+            if (S.meta.matchType === 'ダブルス') {
+                step(2);
             } else {
-                S.names[id] = val;
-                document.getElementById('n-' + id).value = val;
+                // シングルスは直接ゲームへ
+                startGame();
             }
         }
 
+        /* --- STEP 2: ポジション確認 (ダブルスのみ) --- */
         function buildPos() {
             const sSide = S.curServTeam === 0 ? ['A', 'B'] : ['C', 'D'];
             const rSide = S.curServTeam === 0 ? ['C', 'D'] : ['A', 'B'];
@@ -368,15 +413,54 @@
             updDiag();
         }
         function updDiag() { document.getElementById('court-diag').textContent = `S:${S.names[S.sOrder[0]]} / R:${S.names[S.rOrder[0]]}`; }
+        
+        function confirmStep2() {
+            startGame();
+        }
+
+        /* --- 画面遷移の制御 --- */
+        function step(n) {
+            document.querySelectorAll('[id^="step-"]').forEach(el => el.style.display = 'none');
+            setupStep = n;
+            document.getElementById('step-' + setupStep).style.display = 'block';
+            if (n === 2) buildPos();
+        }
+
+        function startGame() {
+            isMatchStarted = true;
+            document.getElementById('modal').classList.add('hidden');
+            
+            // ゲーム画面の表示調整（シングルス時はB・D行を消す）
+            const isSingles = (S.meta.matchType === 'シングルス');
+            document.getElementById('row-B').style.display = isSingles ? 'none' : 'flex';
+            document.getElementById('row-D').style.display = isSingles ? 'none' : 'flex';
+            
+            update();
+        }
+
+        /* --- ゲームロジック --- */
+        function updateName(type, id, val) {
+            if (type === 'team') S.teams[id] = val;
+            else { S.names[id] = val; if(document.getElementById('n-' + id)) document.getElementById('n-' + id).value = val; }
+        }
 
         function getServ() {
-            if (!S.isFinal) { return { s: S.sOrder[Math.floor(S.totalP / 2) % 2], r: S.rOrder[S.totalP % 2], t: S.curServTeam }; }
-            else {
-                const blk = Math.floor(S.totalP / 2) % 4, pb = S.totalP % 2;
-                if (blk === 0) return { s: S.sOrder[0], r: S.rOrder[pb], t: S.curServTeam };
-                if (blk === 1) return { s: S.rOrder[0], r: S.sOrder[pb], t: 1 - S.curServTeam };
-                if (blk === 2) return { s: S.sOrder[1], r: S.rOrder[pb], t: S.curServTeam };
-                return { s: S.rOrder[1], r: S.sOrder[pb], t: 1 - S.curServTeam };
+            if (S.meta.matchType === 'シングルス') {
+                if (!S.isFinal) { return { s: S.curServTeam === 0 ? 'A' : 'C', r: S.curServTeam === 0 ? 'C' : 'A', t: S.curServTeam }; }
+                else {
+                    const isFirstTeamServe = Math.floor(S.totalP / 2) % 2 === 0;
+                    const actTeam = isFirstTeamServe ? S.curServTeam : 1 - S.curServTeam;
+                    return { s: actTeam === 0 ? 'A' : 'C', r: actTeam === 0 ? 'C' : 'A', t: actTeam };
+                }
+            } else {
+                if (!S.isFinal) { return { s: S.sOrder[Math.floor(S.totalP / 2) % 2], r: S.rOrder[S.totalP % 2], t: S.curServTeam }; }
+                else {
+                    const blk = Math.floor(S.totalP / 2) % 4, pb = S.totalP % 2;
+                    if (blk === 0) return { s: S.sOrder[0], r: S.rOrder[pb], t: S.curServTeam };
+                    if (blk === 1) return { s: S.rOrder[0], r: S.sOrder[pb], t: 1 - S.curServTeam };
+                    if (blk === 2) return { s: S.sOrder[1], r: S.rOrder[pb], t: S.curServTeam };
+                    return { s: S.rOrder[1], r: S.sOrder[pb], t: 1 - S.curServTeam };
+                }
             }
         }
 
@@ -386,23 +470,15 @@
             historyStack.push(JSON.stringify(S));
             const { side, p, type } = _act;
             const inf = getServ();
-            if (S.fault === 0 && inf.s) { S.stats[inf.s].fi++; S.stats[inf.s].st++; }
+            if (S.fault === 0 && inf.s === p) { S.stats[inf.s].fi++; S.stats[inf.s].st++; }
             
             if (type === 'p') { 
-                S.stats[p].p++; 
-                if (sub) S.stats[p].pt[sub] = (S.stats[p].pt[sub] || 0) + 1; 
-                S.hist.push(side); 
-                side === 'L' ? S.pL++ : S.pR++; 
+                S.stats[p].p++; if (sub) S.stats[p].pt[sub] = (S.stats[p].pt[sub] || 0) + 1; 
+                S.hist.push(side); side === 'L' ? S.pL++ : S.pR++; 
             } else { 
                 S.stats[p].m++; 
-                if (sub) {
-                    S.stats[p].mt[sub] = (S.stats[p].mt[sub] || 0) + 1;
-                    if (sub.startsWith('recv_')) {
-                         S.stats[p].mt['recv'] = (S.stats[p].mt['recv'] || 0) + 1;
-                    }
-                }
-                S.hist.push(side === 'L' ? 'R' : 'L'); 
-                side === 'L' ? S.pR++ : S.pL++; 
+                if (sub) { S.stats[p].mt[sub] = (S.stats[p].mt[sub] || 0) + 1; if (sub.startsWith('recv_')) S.stats[p].mt['recv'] = (S.stats[p].mt['recv'] || 0) + 1; }
+                S.hist.push(side === 'L' ? 'R' : 'L'); side === 'L' ? S.pR++ : S.pL++; 
             }
             S.fault = 0; S.totalP++; checkEnd(); document.getElementById('submenu').classList.remove('open'); update();
         }
@@ -426,8 +502,8 @@
                     S.curServTeam = 1 - S.curServTeam; 
                     if ((S.gL + S.gR) === S.maxG - 1) S.isFinal = true; 
                     alert((S.gL + S.gR) % 2 !== 0 ? 'チェンジサイズ' : 'チェンジサービス'); 
-                    step(1); 
-                    document.getElementById('modal').classList.remove('hidden'); 
+                    if (S.meta.matchType === 'ダブルス') { step(2); document.getElementById('modal').classList.remove('hidden'); }
+                    else { update(); }
                 }
             }
         }
@@ -441,7 +517,8 @@
             document.getElementById('pt-L').textContent = d.l; document.getElementById('pt-R').textContent = d.r;
             document.getElementById('game-info').textContent = S.isFinal ? 'ファイナル' : `${S.gL + S.gR + 1}ゲーム目`;
             
-            ['A', 'B', 'C', 'D'].forEach(p => {
+            const activePlayers = S.meta.matchType === 'シングルス' ? ['A', 'C'] : ['A', 'B', 'C', 'D'];
+            activePlayers.forEach(p => {
                 document.getElementById('nm-' + p).value = S.names[p];
                 document.getElementById('role-' + p).className = `p-role ${p === inf.s ? 'role-s' : (p === inf.r ? 'role-r' : '')}`;
                 document.getElementById('role-' + p).textContent = p === inf.s ? 'S' : (p === inf.r ? 'R' : '');
@@ -452,39 +529,36 @@
             });
             
             document.getElementById('in-tname-R').value = S.teams.R;
-
             if (S.fault === 0) { document.getElementById('fault-btn').textContent = "FAULT"; document.getElementById('fault-btn').classList.remove('warn'); }
             drawChart('flow-chart', S.hist, S.isFinal);
         }
 
-        function getDisp(l, r, fin) {
-            const border = fin ? 6 : 3;
-            if (l < border || r < border) return { l, r };
-            if (l === r) return { l: 'D', r: 'D' };
-            if (l > r) return { l: 'A', r: 'D' };
-            return { l: 'D', r: 'A' };
-        }
+        function getDisp(l, r, fin) { const border = fin ? 6 : 3; if (l < border || r < border) return { l, r }; if (l === r) return { l: 'D', r: 'D' }; if (l > r) return { l: 'A', r: 'D' }; return { l: 'D', r: 'A' }; }
 
         function showResult() {
+            isMatchStarted = false; // 試合終了でリロード警告を解除
             const winName = S.gL > S.gR ? S.teams.L : S.teams.R;
             document.getElementById('winner-name').textContent = winName;
             document.getElementById('winner-score').textContent = `${S.gL} - ${S.gR}`;
+            
             const tbl = document.getElementById('res-score-tbl');
             let h = `<tr><th></th>${S.log.map((g, i) => `<th>G${i + 1}</th>`).join('')}<th>計</th></tr>`;
             h += `<tr><td class="ct-name" style="color:var(--blue)">${S.teams.L}</td>${S.log.map(g => `<td>${g.L}</td>`).join('')}<td>${S.gL}</td></tr>`;
             h += `<tr><td class="ct-name" style="color:var(--red)">${S.teams.R}</td>${S.log.map(g => `<td>${g.R}</td>`).join('')}<td>${S.gR}</td></tr>`;
             tbl.innerHTML = h;
             
+            const isSingles = (S.meta.matchType === 'シングルス');
+            const players = isSingles ? ['A', 'C'] : ['A', 'B', 'C', 'D'];
+            
             const stTbl = document.getElementById('res-stats-tbl'); stTbl.innerHTML = '';
-            ['A', 'B', 'C', 'D'].forEach(p => {
+            const cards = document.getElementById('detail-cards'); cards.innerHTML = '';
+            cards.className = `detail-grid ${isSingles ? 'singles-mode' : ''}`;
+            
+            players.forEach(p => {
                 const s = S.stats[p];
                 const rate = s.st > 0 ? Math.round(s.fi / s.st * 100) + '%' : '-';
                 stTbl.innerHTML += `<tr><td class="ct-name">${S.names[p]}</td><td>${s.p}</td><td>${s.m}</td><td>${rate}</td></tr>`;
-            });
-            
-            const cards = document.getElementById('detail-cards'); cards.innerHTML = '';
-            ['A', 'B', 'C', 'D'].forEach(p => {
-                const s = S.stats[p];
+                
                 const topP = Object.entries(s.pt).map(([k, v]) => `<span class="chip cp">${getLbl(k)}:${v}</span>`).join('');
                 const topM = Object.entries(s.mt).map(([k, v]) => `<span class="chip cm">${getLbl(k)}:${v}</span>`).join('');
                 cards.innerHTML += `<div class="d-card"><div class="dc-head"><span style="color:${'AB'.includes(p) ? 'var(--blue)' : 'var(--red)'}">${S.names[p]}</span><span>+${s.p} / -${s.m}</span></div><div class="dc-body">${topP || '-'}<br>${topM || '-'}</div></div>`;
@@ -496,77 +570,24 @@
                 flowDiv.innerHTML += `<div class="game-flow-row"><div class="gfr-label">G${i + 1}</div><div class="gfr-dots">${pts}</div></div>`;
             });
             
-            step(2); document.getElementById('modal').classList.remove('hidden');
+            step(3); document.getElementById('modal').classList.remove('hidden');
             setTimeout(() => { const allPts = S.log.flatMap(g => g.flow); drawChart('stats-flow-chart', allPts, false); }, 100);
         }
 
+        /* --- メニュー・チャート類（変更なし） --- */
         const MENUS = {
-            p_server: [
-                { k: 'f', l: 'フォア', i: '🟦', sub: 'p_shot' },
-                { k: 'b', l: 'バック', i: '🟪', sub: 'p_shot' },
-                { k: 'ace', l: 'サービスエース', i: '🎯', sub: 'p_ace_type' }
-            ],
-            p_receiver: [
-                { k: 'f', l: 'フォア', i: '🟦', sub: 'p_shot' },
-                { k: 'b', l: 'バック', i: '🟪', sub: 'p_shot' },
-                { k: 'ace', l: 'レシーブエース', i: '⚡', sub: 'r_ace_shot' }
-            ],
-            p_standard: [
-                { k: 'f', l: 'フォア', i: '🟦', sub: 'p_shot' },
-                { k: 'b', l: 'バック', i: '🟪', sub: 'p_shot' }
-            ],
-            p_ace_type: [
-                { k: 'overhead', l: 'オーバーヘッド', i: '⬆' },
-                { k: 'undercut', l: 'アンダーカット', i: '⬇' },
-                { k: 'other_input', l: 'その他(入力)', i: '🖊', custom: true }
-            ],
-            r_ace_shot: [
-                { k: 'shoot', l: 'シュート', i: '⚡', sub: 'r_ace_course' },
-                { k: 'lob', l: 'ロブ', i: '☁', sub: 'r_ace_course' },
-                { k: 'twist', l: 'ツイスト', i: '🌀', sub: 'r_ace_course' }
-            ],
-            r_ace_course: [
-                { k: 'cross', l: 'クロス', i: '↖' },
-                { k: 'rev', l: '逆クロス', i: '↗' },
-                { k: 'ctr', l: 'センター', i: '•' },
-                { k: 'str', l: 'ストレート', i: '↑' }
-            ],
-            p_shot: [
-                { k: 'shoot', l: 'シュート', i: '⚡', sub: 'p_course' },
-                { k: 'lob', l: 'ロブ', i: '☁', sub: 'p_course' },
-                { k: 'volley', l: 'ボレー', i: '🛡', sub: 'p_course' },
-                { k: 'smash', l: 'スマッシュ', i: '💥', sub: 'p_course' },
-                { k: 'drop', l: 'ドロップ(ツイスト)', i: '🌀', sub: 'p_course' }
-            ],
-            p_course: [
-                { k: 'cross', l: 'クロス', i: '↖' },
-                { k: 'rev', l: '逆クロス', i: '↗' },
-                { k: 'ctr', l: 'センター', i: '•' },
-                { k: 'str', l: 'ストレート', i: '↑' }
-            ],
-            m: [
-                { k: 'f', l: 'フォア', i: '🟦', sub: 'm_shot' },
-                { k: 'b', l: 'バック', i: '🟪', sub: 'm_shot' },
-                { k: 'recv', l: 'レシーブミス', i: '🎾', sub: 'm_recv_hand' }
-            ],
-            m_shot: [
-                { k: 'shoot', l: 'シュート', i: '⚡', sub: 'm_course' },
-                { k: 'lob', l: 'ロブ', i: '☁', sub: 'm_course' },
-                { k: 'volley', l: 'ボレー', i: '🛡', sub: 'm_course' },
-                { k: 'smash', l: 'スマッシュ', i: '💥', sub: 'm_course' },
-                { k: 'drop', l: 'ドロップ(ツイスト)', i: '🌀', sub: 'm_course' }
-            ],
-            m_course: [
-                { k: 'cross', l: 'クロス', i: '↖', sub: 'm_err' },
-                { k: 'rev', l: '逆クロス', i: '↗', sub: 'm_err' },
-                { k: 'ctr', l: 'センター', i: '•', sub: 'm_err' },
-                { k: 'str', l: 'ストレート', i: '↑', sub: 'm_err' }
-            ],
-            m_err: [
-                { k: 'bout', l: 'バックアウト', i: '⬆' },
-                { k: 'sout', l: 'サイドアウト', i: '➡' }, 
-                { k: 'net', l: 'ネット', i: '🔴' }
-            ],
+            p_server: [ { k: 'f', l: 'フォア', i: '🟦', sub: 'p_shot' }, { k: 'b', l: 'バック', i: '🟪', sub: 'p_shot' }, { k: 'ace', l: 'SA', i: '🎯', sub: 'p_ace_type' } ],
+            p_receiver: [ { k: 'f', l: 'フォア', i: '🟦', sub: 'p_shot' }, { k: 'b', l: 'バック', i: '🟪', sub: 'p_shot' }, { k: 'ace', l: 'RA', i: '⚡', sub: 'r_ace_shot' } ],
+            p_standard: [ { k: 'f', l: 'フォア', i: '🟦', sub: 'p_shot' }, { k: 'b', l: 'バック', i: '🟪', sub: 'p_shot' } ],
+            p_ace_type: [ { k: 'overhead', l: 'オーバー', i: '⬆' }, { k: 'undercut', l: 'カット', i: '⬇' }, { k: 'other_input', l: 'その他', i: '🖊', custom: true } ],
+            r_ace_shot: [ { k: 'shoot', l: 'シュート', i: '⚡', sub: 'r_ace_course' }, { k: 'lob', l: 'ロブ', i: '☁', sub: 'r_ace_course' }, { k: 'twist', l: 'ツイスト', i: '🌀', sub: 'r_ace_course' } ],
+            r_ace_course: [ { k: 'cross', l: 'クロス', i: '↖' }, { k: 'rev', l: '逆クロス', i: '↗' }, { k: 'ctr', l: 'センター', i: '•' }, { k: 'str', l: 'ストレート', i: '↑' } ],
+            p_shot: [ { k: 'shoot', l: 'シュート', i: '⚡', sub: 'p_course' }, { k: 'lob', l: 'ロブ', i: '☁', sub: 'p_course' }, { k: 'volley', l: 'ボレー', i: '🛡', sub: 'p_course' }, { k: 'smash', l: 'スマッシュ', i: '💥', sub: 'p_course' }, { k: 'drop', l: 'ドロップ', i: '🌀', sub: 'p_course' } ],
+            p_course: [ { k: 'cross', l: 'クロス', i: '↖' }, { k: 'rev', l: '逆クロス', i: '↗' }, { k: 'ctr', l: 'センター', i: '•' }, { k: 'str', l: 'ストレート', i: '↑' } ],
+            m: [ { k: 'f', l: 'フォア', i: '🟦', sub: 'm_shot' }, { k: 'b', l: 'バック', i: '🟪', sub: 'm_shot' }, { k: 'recv', l: 'Rミス', i: '🎾', sub: 'm_recv_hand' } ],
+            m_shot: [ { k: 'shoot', l: 'シュート', i: '⚡', sub: 'm_course' }, { k: 'lob', l: 'ロブ', i: '☁', sub: 'm_course' }, { k: 'volley', l: 'ボレー', i: '🛡', sub: 'm_course' }, { k: 'smash', l: 'スマッシュ', i: '💥', sub: 'm_course' }, { k: 'drop', l: 'ドロップ', i: '🌀', sub: 'm_course' } ],
+            m_course: [ { k: 'cross', l: 'クロス', i: '↖', sub: 'm_err' }, { k: 'rev', l: '逆クロス', i: '↗', sub: 'm_err' }, { k: 'ctr', l: 'センター', i: '•', sub: 'm_err' }, { k: 'str', l: 'ストレート', i: '↑', sub: 'm_err' } ],
+            m_err: [ { k: 'bout', l: 'Bアウト', i: '⬆' }, { k: 'sout', l: 'Sアウト', i: '➡' }, { k: 'net', l: 'ネット', i: '🔴' } ],
             m_recv_hand: [ { k: 'f', l: 'フォア', i: '🟦', sub: 'm_recv_type' }, { k: 'b', l: 'バック', i: '🟪', sub: 'm_recv_type' } ],
             m_recv_type: [ { k: 'lob', l: 'ロブ', i: '☁', sub: 'm_recv_course' }, { k: 'shoot', l: 'シュート', i: '⚡', sub: 'm_recv_course' }, { k: 'twist', l: 'ツイスト', i: '🌀', sub: 'm_recv_course' } ], 
             m_recv_course: [ { k: 'str', l: 'ストレート', i: '↑', sub: 'm_recv_err' }, { k: 'cross', l: 'クロス', i: '↖', sub: 'm_recv_err' }, { k: 'rev', l: '逆クロス', i: '↗', sub: 'm_recv_err' }, { k: 'ctr', l: 'センター', i: '•', sub: 'm_recv_err' } ],
@@ -575,90 +596,37 @@
 
         function showSM(type, p, prefix = '') {
             const sm = document.getElementById('sm-body'); sm.innerHTML = '';
-            
-            let list;
-            const inf = getServ(); 
-            const isServer = (p === inf.s);
-            const isReceiver = (p === inf.r);
-
-            if (type === 'p') {
-                if (isServer) {
-                    list = MENUS['p_server'];
-                } else if (isReceiver) {
-                    list = MENUS['p_receiver'];
-                } else {
-                    list = MENUS['p_standard'];
-                }
-            } else if (MENUS[type]) {
-                list = MENUS[type];
-            } else {
-                if (type.startsWith('p_detail_')) list = MENUS['p_shot']; 
-                else if (type.startsWith('m_detail_')) list = MENUS['m_shot']; 
-                else list = MENUS['p_server']; 
-            }
+            let list; const inf = getServ(); const isServer = (p === inf.s); const isReceiver = (p === inf.r);
+            if (type === 'p') { list = isServer ? MENUS['p_server'] : (isReceiver ? MENUS['p_receiver'] : MENUS['p_standard']); }
+            else if (MENUS[type]) { list = MENUS[type]; }
+            else { list = type.startsWith('p_detail_') ? MENUS['p_shot'] : (type.startsWith('m_detail_') ? MENUS['m_shot'] : MENUS['p_server']); }
             
             document.getElementById('sm-title').textContent = type.startsWith('p') ? 'ポイント内容' : 'ミス内容';
-            
             list.forEach(item => {
                 if (item.k === 'recv' && !isReceiver) return; 
-
                 const b = document.createElement('button'); b.className = 'sm-btn';
                 b.innerHTML = `<div style="font-size:1.5rem">${item.i}</div><div style="font-size:0.75rem">${item.l}</div>`;
-                
                 b.onclick = () => { 
-                    if (item.custom) {
-                        const val = prompt("内容を入力してください");
-                        if (val) {
-                            commit(prefix + "other_" + val);
-                        }
-                    } else if (item.sub) { 
-                        let nextPre = prefix;
-                        if (item.k === 'recv') nextPre = 'recv_';
-                        else nextPre += item.k + '_';
-                        showSM(item.sub, p, nextPre); 
-                    } else { 
-                        commit(prefix + item.k); 
-                    } 
+                    if (item.custom) { const val = prompt("内容を入力してください"); if (val) commit(prefix + "other_" + val); }
+                    else if (item.sub) { let nextPre = prefix; if (item.k === 'recv') nextPre = 'recv_'; else nextPre += item.k + '_'; showSM(item.sub, p, nextPre); }
+                    else { commit(prefix + item.k); } 
                 };
                 sm.appendChild(b);
             });
-            
-            const back = document.createElement('button'); 
-            back.className = 'sm-back'; 
-            
-            if (type === 'p' || type === 'm') {
-                back.textContent = 'キャンセル (閉じる)'; 
-                back.onclick = () => { document.getElementById('submenu').classList.remove('open'); }; 
-            } else {
-                back.textContent = '戻る'; 
-                back.onclick = () => { showSM(type.startsWith('p') || type.startsWith('r_ace') ? 'p' : 'm', p); }; 
-            }
+            const back = document.createElement('button'); back.className = 'sm-back'; 
+            if (type === 'p' || type === 'm') { back.textContent = 'キャンセル (閉じる)'; back.onclick = () => { document.getElementById('submenu').classList.remove('open'); }; }
+            else { back.textContent = '戻る'; back.onclick = () => { showSM(type.startsWith('p') || type.startsWith('r_ace') ? 'p' : 'm', p); }; }
             sm.appendChild(back);
-            
             document.getElementById('submenu').classList.add('open');
         }
 
         function getLbl(k) {
-            if (k === 'ace') return 'SA';
-            if (k === 'df') return 'DF';
-            
+            if (k === 'ace') return 'SA'; if (k === 'df') return 'DF';
             const parts = k.split('_');
-            const dict = {
-                recv: 'R', f: 'F', b: 'B',
-                shoot: 'S', lob: 'L', twist: 'Tw', drop: 'Dr', volley: 'V', smash: 'Sm',
-                str: 'St', cross: 'Cr', rev: 'Rx', ctr: 'Ct',
-                net: 'Nt', out: 'Ot', sout: 'S.Ot', bout: 'B.Ot', back: 'Bk',
-                overhead: 'Ov', undercut: 'Un', other: 'Etc'
-            };
-            
+            const dict = { recv: 'R', f: 'F', b: 'B', shoot: 'S', lob: 'L', twist: 'Tw', drop: 'Dr', volley: 'V', smash: 'Sm', str: 'St', cross: 'Cr', rev: 'Rx', ctr: 'Ct', net: 'Nt', out: 'Ot', sout: 'S.Ot', bout: 'B.Ot', back: 'Bk', overhead: 'Ov', undercut: 'Un', other: 'Etc' };
             let validParts = parts;
-            if (parts[0] === 'recv' && parts.length > 1) {
-                 validParts = parts.slice(1);
-                 return 'R-' + validParts.map(p => dict[p] || p).join('-');
-            }
-
-            const short = validParts.map(p => dict[p] || p).join('-');
-            return short;
+            if (parts[0] === 'recv' && parts.length > 1) { validParts = parts.slice(1); return 'R-' + validParts.map(p => dict[p] || p).join('-'); }
+            return validParts.map(p => dict[p] || p).join('-');
         }
 
         function drawChart(id, hist, fin) {
@@ -674,48 +642,31 @@
             ctx.stroke();
         }
 
-        window.addEventListener('resize', () => { if (S.totalP > 0) update(); if (setupStep === 2) { const allPts = S.log.flatMap(g => g.flow); drawChart('stats-flow-chart', allPts, false); } });
-
+        /* --- データ保存・送信 --- */
         function downloadJSON() { const b = new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'match_data.json'; a.click(); }
-        function resetMatch() { if (confirm('リセットしますか？')) location.reload(); }
+        function resetMatch() { if (confirm('本当に入力データをリセットして最初からやり直しますか？')) location.reload(); }
 
-        function sendToCloud(type) {
-            let targetUrl = "";
-            let btnId = "";
-            let label = "";
-
-            if (type === 'MEN') {
-                targetUrl = GAS_URL_MEN;
-                btnId = 'btn-send-men';
-                label = "男子";
-            } else {
-                targetUrl = GAS_URL_WOMEN;
-                btnId = 'btn-send-women';
-                label = "女子";
-            }
-
-            const btn = document.getElementById(btnId);
+        function sendToCloud() {
+            const btn = document.getElementById('btn-send-integrated');
             const originalText = btn.innerHTML;
             btn.innerHTML = "送信中...";
             btn.disabled = true;
 
-            const payload = JSON.stringify(S);
-
-            fetch(targetUrl, {
+            fetch(GAS_URL_INTEGRATED, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'text/plain' },
-                body: payload
+                body: JSON.stringify(S)
             })
             .then(() => {
-                alert(`☁ ${label}データを送信しました！`);
-                btn.innerHTML = "送信完了";
-                setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 3000);
+                alert(`☁ データを送信しました！\n（${S.meta.gender} / ${S.meta.matchType}）`);
+                btn.innerHTML = "✓ 送信完了";
+                // 誤送信防止のため、ボタンは無効化したままにする
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert("送信に失敗しました。\n通信環境を確認してください。");
-                btn.innerHTML = "再送信";
+                btn.innerHTML = "再送信する";
                 btn.disabled = false;
             });
         }

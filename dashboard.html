@@ -7,62 +7,78 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
+        /* ── COLORS & THEME ── */
         :root {
-            --bg: #0d1117; --surface: #161b22; --border: #30363d;
-            --blue: #3182ce; --red: #e53e3e; --gold: #d69e2e; --text: #c9d1d9;
+            --bg: #f1f5f9; 
+            --surface: #ffffff; 
+            --border: #94a3b8;
+            --text: #0f172a; 
+            --text-dim: #475569;
+            --blue: #0284c7; 
+            --red: #ea580c;  
+            --gold: #d97706; 
         }
-
+        
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); padding: 10px; }
 
         /* HEADER */
-        .dash-header { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 2px solid var(--border); margin-bottom: 15px; }
-        .dash-title { font-size: 1.1rem; font-weight: 900; color: var(--gold); display: flex; align-items: center; gap: 8px; }
-        .live-badge { background: rgba(229, 62, 62, 0.2); color: #fc8181; padding: 2px 8px; border-radius: 4px; font-family: 'Orbitron', sans-serif; font-size: 0.7rem; font-weight: bold; border: 1px solid #fc8181; }
+        .dash-header { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 2px solid var(--border); margin-bottom: 15px; background: var(--surface); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .dash-title { font-size: 1.1rem; font-weight: 900; color: var(--text); display: flex; align-items: center; gap: 8px; }
+        .live-badge { background: #fee2e2; color: #dc2626; padding: 2px 8px; border-radius: 4px; font-family: 'Orbitron', sans-serif; font-size: 0.7rem; font-weight: bold; border: 1px solid #fca5a5; }
 
         /* GRID/LIST CONTAINER */
         .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 15px; }
 
-        /* MATCH CARD (リスト形式を基本にする) */
+        /* MATCH CARD */
         .m-card { 
             background: var(--surface); border: 1px solid var(--border); border-radius: 8px; 
             display: flex; flex-direction: column; cursor: pointer; text-decoration: none; color: inherit;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
         }
+        .m-card:active { transform: scale(0.98); }
         
-        .mc-top { background: #000; padding: 6px 10px; display: flex; justify-content: space-between; align-items: center; border-radius: 8px 8px 0 0; }
-        .mc-court { font-size: 0.85rem; font-weight: 900; color: var(--gold); }
-        .mc-stage { font-size: 0.7rem; color: #8b949e; }
+        .mc-top { background: #f8fafc; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; border-radius: 8px 8px 0 0; border-bottom: 1px solid var(--border); }
+        .mc-court { font-size: 0.9rem; font-weight: 900; color: var(--gold); }
+        .mc-stage { font-size: 0.75rem; color: var(--text-dim); font-weight: bold; }
 
-        .mc-main { display: flex; align-items: center; padding: 10px; gap: 10px; }
+        .mc-main { display: flex; align-items: center; padding: 12px 10px; gap: 10px; }
         
         .team-box { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .team-name { font-size: 0.95rem; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .player-names { font-size: 0.7rem; color: #8b949e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .team-name { font-size: 0.95rem; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+        .player-names { font-size: 0.75rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; }
 
-        /* スコア表示 (デジタル数字風) */
-        .score-box { display: flex; align-items: center; background: #000; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border); }
-        .g-num { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 900; width: 25px; text-align: center; }
-        .p-num { font-family: 'Orbitron', sans-serif; font-size: 0.9rem; font-weight: bold; color: var(--gold); background: #222; padding: 2px 4px; border-radius: 3px; margin-left: 5px; min-width: 18px; text-align: center;}
-        .sep { color: #444; font-weight: bold; padding: 0 4px; }
+        /* スコア表示 */
+        .score-box { display: flex; align-items: center; background: #f1f5f9; padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border); }
+        .g-num { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 900; width: 25px; text-align: center; }
+        .p-num { font-family: 'Orbitron', sans-serif; font-size: 0.9rem; font-weight: bold; color: #ffffff; background: var(--text); padding: 2px 4px; border-radius: 4px; margin-left: 5px; min-width: 20px; text-align: center;}
+        .sep { color: var(--border); font-weight: bold; padding: 0 4px; }
 
         .c-L { color: var(--blue); }
         .c-R { color: var(--red); }
 
-        /* スマホ用: 画面が狭いとき */
-        @media (max-width: 600px) {
-            .grid-container { grid-template-columns: 1fr; gap: 8px; }
-            .dash-header { padding: 5px; }
-            .team-name { font-size: 0.85rem; }
-            .g-num { font-size: 1.2rem; }
-            .p-num { font-size: 0.75rem; }
+        /* 終了した試合用のデザイン */
+        .m-card.finished { 
+            background: #f8fafc; border-color: #e2e8f0; box-shadow: none; 
         }
+        .m-card.finished .mc-top { background: #f1f5f9; }
+        .m-card.finished .team-name, .m-card.finished .g-num { color: var(--text-dim) !important; }
+        .m-card.finished .p-num { background: #94a3b8 !important; }
+        .m-card.finished .mc-court { color: var(--text-dim) !important; }
 
-        /* PC用: 画面が広いときはカードらしく */
+        @media (max-width: 600px) {
+            .grid-container { grid-template-columns: 1fr; gap: 10px; }
+            .dash-header { padding: 10px; }
+            .team-name { font-size: 0.85rem; }
+            .g-num { font-size: 1.3rem; }
+            .p-num { font-size: 0.8rem; }
+        }
         @media (min-width: 900px) {
             .grid-container { grid-template-columns: repeat(3, 1fr); }
         }
 
-        .footer-info { margin-top: 20px; text-align: center; font-size: 0.7rem; color: #8b949e; }
+        .footer-info { margin-top: 20px; text-align: center; font-size: 0.75rem; color: var(--text-dim); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -72,11 +88,11 @@
             <span class="live-badge">LIVE</span>
             岩手選抜 速報ダッシュボード
         </div>
-        <div id="d-time" style="font-size: 0.7rem; color: #8b949e;">--:--:-- 更新</div>
+        <div id="d-time" style="font-size: 0.75rem; color: var(--text-dim); font-weight: bold;">--:--:-- 更新</div>
     </div>
 
     <div class="grid-container" id="grid-wrap">
-        <div style="text-align: center; padding: 40px; color: #8b949e;">接続中...</div>
+        <div style="text-align: center; padding: 40px; color: var(--text-dim); font-weight: bold;">接続中...</div>
     </div>
 
     <div class="footer-info">
@@ -95,8 +111,8 @@
         async function fetchDashboard() {
             try {
                 const response = await fetch(`${GAS_URL_LIVE}?all=true`);
-                const activeMatches = await response.json();
-                renderDashboard(activeMatches);
+                const matches = await response.json();
+                renderDashboard(matches);
                 const now = new Date();
                 document.getElementById('d-time').textContent = now.toLocaleTimeString() + ' 更新';
             } catch (error) {
@@ -106,23 +122,32 @@
 
         function getCourtShortName(id) {
             if(!id) return '';
-            const num = id.split('_')[1] + '面';
-            if(id.startsWith('ise_')) return '市営' + num;
-            if(id.startsWith('sun_')) return 'ｻﾝｱﾘｰﾅ' + num;
-            if(id.startsWith('ken_')) return '県営' + num;
-            return id;
+            return '伊勢市営' + id.split('_')[1] + 'コート';
         }
 
         function renderDashboard(matches) {
             const wrap = document.getElementById('grid-wrap');
-            if (matches.length === 0) {
-                wrap.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #8b949e;">現在、進行中の試合はありません</div>`;
+            const now = Date.now();
+            const TIMEOUT_MS = 30 * 60 * 1000; 
+
+            let activeMatches = matches.filter(S => {
+                if (!S.lastUpdate) return false; 
+                if (S.isFinished) return true; 
+                return (now - S.lastUpdate) < TIMEOUT_MS;
+            });
+
+            if (activeMatches.length === 0) {
+                wrap.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 50px; color: var(--text-dim); font-weight: bold;">現在、表示できる試合データはありません</div>`;
                 return;
             }
 
-            matches.sort((a, b) => (a.meta.court > b.meta.court) ? 1 : -1);
+            activeMatches.sort((a, b) => {
+                const numA = parseInt(a.meta.court.split('_')[1]) || 0;
+                const numB = parseInt(b.meta.court.split('_')[1]) || 0;
+                return numA - numB;
+            });
 
-            wrap.innerHTML = matches.map(S => {
+            wrap.innerHTML = activeMatches.map(S => {
                 const courtName = getCourtShortName(S.meta.court);
                 const d = getDisp(S.pL, S.pR, S.isFinal);
                 const inf = getServ(S);
@@ -131,17 +156,22 @@
                 const playersL = isSingles ? S.names.A : `${S.names.A}・${S.names.B}`;
                 const playersR = isSingles ? S.names.C : `${S.names.C}・${S.names.D}`;
                 
-                // サーバーマーク
-                const sL = (inf.s === 'A' || inf.s === 'B') ? '🎾' : '';
-                const sR = (inf.s === 'C' || inf.s === 'D') ? '🎾' : '';
+                const isFin = S.isFinished;
+                const cardClass = isFin ? 'm-card finished' : 'm-card';
+                
+                const sL = (!isFin && (inf.s === 'A' || inf.s === 'B')) ? '🎾' : '';
+                const sR = (!isFin && (inf.s === 'C' || inf.s === 'D')) ? '🎾' : '';
+                
+                const statusBadge = isFin
+                    ? `<span style="background:#94a3b8; color:#fff; padding:2px 6px; border-radius:4px; font-size:0.65rem; margin-right:5px; vertical-align:middle;">終了</span>`
+                    : `<span style="color:#dc2626; font-size:0.65rem; font-weight:900; margin-right:5px; vertical-align:middle;">●LIVE</span>`;
 
-                // GitHub PagesのURLを自動生成（live.htmlへ飛べるようにする）
                 const detailUrl = `live.html?court=${S.meta.court}`;
 
                 return `
-                <a href="${detailUrl}" class="m-card">
+                <a href="${detailUrl}" class="${cardClass}">
                     <div class="mc-top">
-                        <span class="mc-court">${courtName}</span>
+                        <span class="mc-court">${statusBadge}${courtName}</span>
                         <span class="mc-stage">${S.meta.stage || ''} (${S.meta.matchType})</span>
                     </div>
                     <div class="mc-main">
@@ -184,7 +214,7 @@
             } else {
                 if (!S.isFinal) return { s: S.sOrder[Math.floor(S.totalP / 2) % 2] };
                 const blk = Math.floor(S.totalP / 2) % 4;
-                return { s: (blk === 0 || blk === 2) ? S.sOrder[blk/2] : S.rOrder[0] }; // 簡易化
+                return { s: (blk === 0 || blk === 2) ? S.sOrder[blk/2] : S.rOrder[0] };
             }
         }
     </script>

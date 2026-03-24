@@ -275,6 +275,17 @@
                     <div class="rh-score" id="winner-score">4 - 2</div>
                 </div>
                 <div class="compact-chart-wrap"><canvas id="stats-flow-chart"></canvas></div>
+                
+                <div style="background:var(--surface2); padding:8px; border-radius:8px; margin-bottom:8px; border:1px solid var(--border);">
+                    <div style="font-size:0.7rem; color:var(--text-dim); font-weight:bold; margin-bottom:4px;">✏️ 相手チーム・選手名の修正（送信前ならいつでも可能）</div>
+                    <div style="display:flex; gap:4px; margin-bottom:4px;">
+                        <input class="name-input" style="padding:6px; font-size:0.8rem;" id="res-edit-teamR" placeholder="相手チーム名" onchange="updateResultName('team','R',this.value)">
+                    </div>
+                    <div style="display:flex; gap:4px;">
+                        <input class="name-input" style="padding:6px; font-size:0.8rem;" id="res-edit-nmC" placeholder="選手C" onchange="updateResultName('player','C',this.value)">
+                        <input class="name-input" style="padding:6px; font-size:0.8rem;" id="res-edit-nmD" placeholder="選手D" onchange="updateResultName('player','D',this.value)">
+                    </div>
+                </div>
                 <table class="compact-table" id="res-score-tbl"></table>
                 <table class="compact-table">
                     <thead><tr style="background:var(--surface2);"><th>選手</th><th>得点</th><th>ミス</th><th>1st%</th></tr></thead>
@@ -393,7 +404,13 @@
             ]
         };
 
+        // 試合ごとに固有のIDを発行する関数（上書き保存を防ぐため）
+        function generateMatchId() {
+            return Date.now().toString(36) + Math.random().toString(36).substring(2, 5);
+        }
+
         let S = {
+            matchId: generateMatchId(), // 初期化時に固有IDを持たせる
             maxG: 5, winG: 3, gL: 0, gR: 0, pL: 0, pR: 0, totalP: 0, fault: 0, isFinal: false,
             startTeam: null, curServTeam: null, sOrder: [], rOrder: [],
             meta: { gender: '', matchType: '', tourney: '', stage: '', scorer: '', court: 'court_1' },
@@ -425,7 +442,8 @@
 
         function clearLiveScore() {
             if (!S || !S.meta || !S.meta.court || !navigator.onLine) return;
-            const clearData = { meta: { court: S.meta.court }, clear: true };
+            // 固有IDも送ることで「今行っていた未完了の試合」だけを消去する
+            const clearData = { meta: { court: S.meta.court }, matchId: S.matchId, clear: true };
             if (navigator.sendBeacon) {
                 navigator.sendBeacon(GAS_URL_LIVE, JSON.stringify(clearData));
             } else {
@@ -454,6 +472,28 @@
         function selMatchType(t) { S.meta.matchType = t; upBtns('type-opts', t === 'シングルス' ? 0 : 1); checkS0(); }
         function checkS0() { document.getElementById('btn-next-0').disabled = !(S.meta.gender && S.meta.matchType); }
         
+        async function lockActiveCourts() {
+            const courtSelect = document.getElementById('meta-court');
+            try {
+                const response = await fetch(GAS_URL_LIVE + "?action=getActiveCourts");
+                const activeCourts = await response.json(); 
+
+                Array.from(courtSelect.options).forEach(opt => {
+                    if (activeCourts.includes(opt.value)) {
+                        opt.disabled = true;
+                        opt.text = "⚠️使用中: " + getCourtFullName(opt.value);
+                        opt.style.color = "red";
+                    } else {
+                        opt.disabled = false;
+                        opt.text = getCourtFullName(opt.value);
+                        opt.style.color = "var(--blue)";
+                    }
+                });
+            } catch (error) {
+                console.log("コート使用状況の取得に失敗しました", error);
+            }
+        }
+
         function goToStep1() {
             const isSingles = (S.meta.matchType === 'シングルス');
             document.getElementById('disp-mode-label').textContent = `【 ${S.meta.gender} ${S.meta.matchType} 】`;
@@ -476,6 +516,7 @@
             
             document.getElementById('btn-next-1').textContent = isSingles ? "ゲーム開始" : "ポジション設定へ";
             step(1);
+            lockActiveCourts();
         }
 
         /* --- STEP 1 --- */
@@ -490,13 +531,19 @@
             if (!nameA) { alert((S.meta.matchType==='シングルス'?'選手':'選手A') + "を選択してください。"); return; }
             if (S.meta.matchType === 'ダブルス' && !nameB) { alert("選手Bを選択してください。"); return; }
 
+            const courtSelect = document.getElementById('meta-court');
+            const courtName = courtSelect.options[courtSelect.selectedIndex].text;
+            if (!confirm(`【⚠️重要確認】\n選択したコートは「${courtName}」です。\n\n他のタブレットとコート番号が被っていませんか？\n被るとライブ中継の表示がバグります！\n\n本当によろしいですか？`)) {
+                return; 
+            }
+
             S.meta.court = document.getElementById('meta-court').value;
             S.meta.tourney = document.getElementById('meta-tourney').value;
             S.meta.stage = document.getElementById('meta-stage').value;
             
-            const courtName = getCourtFullName(S.meta.court);
+            const courtNameFullName = getCourtFullName(S.meta.court);
             const stageText = S.meta.stage ? ` / ${S.meta.stage}` : '';
-            const headerInfo = courtName + stageText;
+            const headerInfo = courtNameFullName + stageText;
 
             if(document.getElementById('disp-court-s2')) document.getElementById('disp-court-s2').textContent = headerInfo;
             if(document.getElementById('disp-court-s3')) document.getElementById('disp-court-s3').textContent = headerInfo;
@@ -638,6 +685,7 @@
             }
         }
 
+        // 試合終了判定と、通信渋滞の解消処理
         function checkEnd() {
             const L = S.pL, R = S.pR, fin = S.isFinal;
             const border = fin ? 7 : 4; 
@@ -647,11 +695,11 @@
                 S.log.push({ n: S.gL + S.gR + 1, L: S.pL, R: S.pR, w: win, flow: [...S.hist], fin });
                 win === 'L' ? S.gL++ : S.gR++; 
 
-                update();
-                sendToLive();
+                update(); // 画面上は更新する
 
                 setTimeout(() => {
                     if (S.gL === S.winG || S.gR === S.winG) {
+                        // 試合が完全に終了した場合は、showResult()の中のsendToLive(true)で1回だけ送信する（渋滞防止）
                         showResult();
                     } else { 
                         S.pL = 0; S.pR = 0; S.totalP = 0; S.hist = [];
@@ -665,7 +713,7 @@
                             document.getElementById('modal').classList.remove('hidden'); 
                         } else { 
                             update(); 
-                            sendToLive();
+                            sendToLive(); // 次のゲームへ進む場合はここで送信
                         }
                     }
                 }, 100);
@@ -709,12 +757,32 @@
 
         function showResult() {
             S.isFinished = true;
-            sendToLive(true);   
+            sendToLive(true);   // ここで「最終ポイントを含んだ試合終了」の通信を1回だけ送る
 
             isMatchStarted = false; 
+            
+            renderResultUI();
+            
+            step(3); document.getElementById('modal').classList.remove('hidden');
+            setTimeout(() => { const allPts = S.log.flatMap(g => g.flow); drawChart('stats-flow-chart', allPts, false); }, 100);
+            
+            updateUnsentCount();
+        }
+
+        function renderResultUI() {
             const winName = S.gL > S.gR ? S.teams.L : S.teams.R;
             document.getElementById('winner-name').textContent = winName;
             document.getElementById('winner-score').textContent = `${S.gL} - ${S.gR}`;
+            
+            document.getElementById('res-edit-teamR').value = S.teams.R;
+            document.getElementById('res-edit-nmC').value = S.names.C;
+            const editNmD = document.getElementById('res-edit-nmD');
+            if (S.meta.matchType === 'シングルス') {
+                editNmD.style.display = 'none';
+            } else {
+                editNmD.style.display = 'block';
+                editNmD.value = S.names.D;
+            }
             
             const tbl = document.getElementById('res-score-tbl');
             let h = `<tr><th></th>${S.log.map((g, i) => `<th>G${i + 1}</th>`).join('')}<th>計</th></tr>`;
@@ -744,11 +812,21 @@
                 const pts = g.flow.map(x => `<div class="dot-s ${x === 'L' ? 'dot-L' : 'dot-R'}">${x}</div>`).join('');
                 flowDiv.innerHTML += `<div class="game-flow-row"><div class="gfr-label">G${i + 1}</div><div class="gfr-dots">${pts}</div></div>`;
             });
+        }
+
+        function updateResultName(type, id, val) {
+            updateName(type, id, val); 
             
-            step(3); document.getElementById('modal').classList.remove('hidden');
-            setTimeout(() => { const allPts = S.log.flatMap(g => g.flow); drawChart('stats-flow-chart', allPts, false); }, 100);
-            
-            updateUnsentCount();
+            if (type === 'team') {
+                const inTnameR = document.getElementById('in-tname-R');
+                if(inTnameR) inTnameR.value = val;
+            } else {
+                const nmInput = document.getElementById('nm-' + id);
+                if(nmInput) nmInput.value = val;
+            }
+
+            renderResultUI(); 
+            sendToLive(true); 
         }
 
         const MENUS = {
@@ -822,7 +900,10 @@
         
         function resetMatch() { 
             if (confirm('本当に入力データをリセットして最初からやり直しますか？')) {
-                if(navigator.onLine) clearLiveScore(); 
+                // 試合が終了している場合は消さず、進行中の場合のみダッシュボードからクリアする
+                if(navigator.onLine && !S.isFinished) {
+                    clearLiveScore(); 
+                }
                 location.reload();
             }
         }

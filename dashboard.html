@@ -86,6 +86,7 @@
         <div class="dash-title">
             <span class="live-badge">LIVE</span>
             岩手選抜 速報ダッシュボード
+            <span id="d-date" style="font-size: 0.9rem; color: var(--text-dim); font-weight: bold; margin-left: 8px;"></span>
         </div>
         <div id="d-time" style="font-size: 0.75rem; color: var(--text-dim); font-weight: bold;">--:--:-- 更新</div>
     </div>
@@ -118,6 +119,11 @@
         const GAS_URL_LIVE = "https://script.google.com/macros/s/AKfycbzmYnneVj2-xdV-ThBIpdiVlYoYzGAw1wQh06Woj0pDys_0LISb5prtT2ppeE3n6jc_Xg/exec";
 
         window.onload = () => {
+            // 日付と曜日の自動取得・表示
+            const now = new Date();
+            const days = ['日', '月', '火', '水', '木', '金', '土'];
+            document.getElementById('d-date').textContent = `${now.getMonth() + 1}月${now.getDate()}日（${days[now.getDay()]}）`;
+
             fetchDashboard();
             setInterval(fetchDashboard, 5000); 
         };

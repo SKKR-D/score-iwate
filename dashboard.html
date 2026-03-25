@@ -100,6 +100,11 @@
         <div class="grid-container" id="finished-wrap"></div>
     </div>
 
+    <div id="aborted-section" style="display: none;">
+        <div class="section-title" style="margin-top: 30px;">🛑 打ち切り</div>
+        <div class="grid-container" id="aborted-wrap"></div>
+    </div>
+
     <div id="empty-msg" style="text-align: center; padding: 40px; color: var(--text-dim); font-weight: bold;">
         接続中...
     </div>
@@ -144,18 +149,24 @@
             const playersR = isSingles ? S.names.C : `${S.names.C}・${S.names.D}`;
             
             const isFin = S.isFinished;
+            const isAborted = S.isAborted;
             const cardClass = isFin ? 'm-card finished' : 'm-card';
             
             const sL = (!isFin && (inf.s === 'A' || inf.s === 'B')) ? '🎾' : '';
             const sR = (!isFin && (inf.s === 'C' || inf.s === 'D')) ? '🎾' : '';
             
-            const statusBadge = isFin
-                ? `<span style="background:#94a3b8; color:#fff; padding:2px 6px; border-radius:4px; font-size:0.65rem; margin-right:5px; vertical-align:middle;">終了</span>`
-                : `<span style="color:#dc2626; font-size:0.65rem; font-weight:900; margin-right:5px; vertical-align:middle;">●LIVE</span>`;
+            let statusBadge = '';
+            if (isAborted) {
+                statusBadge = `<span style="background:#64748b; color:#fff; padding:2px 6px; border-radius:4px; font-size:0.65rem; margin-right:5px; vertical-align:middle;">打ち切り</span>`;
+            } else if (isFin) {
+                statusBadge = `<span style="background:#94a3b8; color:#fff; padding:2px 6px; border-radius:4px; font-size:0.65rem; margin-right:5px; vertical-align:middle;">終了</span>`;
+            } else {
+                statusBadge = `<span style="color:#dc2626; font-size:0.65rem; font-weight:900; margin-right:5px; vertical-align:middle;">●LIVE</span>`;
+            }
 
-            // ★勝者の判定と色付けの調整
+            // ★勝者の判定と色付けの調整（打ち切り時は勝者なし）
             let winner = '';
-            if (isFin) {
+            if (isFin && !isAborted) {
                 if (S.gL > S.gR) winner = 'L';
                 else if (S.gR > S.gL) winner = 'R';
             }
@@ -200,8 +211,11 @@
         function renderDashboard(matches) {
             const liveWrap = document.getElementById('live-wrap');
             const finishedWrap = document.getElementById('finished-wrap');
+            const abortedWrap = document.getElementById('aborted-wrap');
+            
             const liveSection = document.getElementById('live-section');
             const finishedSection = document.getElementById('finished-section');
+            const abortedSection = document.getElementById('aborted-section');
             const emptyMsg = document.getElementById('empty-msg');
             
             const now = Date.now();
@@ -216,6 +230,7 @@
             if (validMatches.length === 0) {
                 liveSection.style.display = 'none';
                 finishedSection.style.display = 'none';
+                abortedSection.style.display = 'none';
                 emptyMsg.style.display = 'block';
                 emptyMsg.innerHTML = "現在、表示できる試合データはありません";
                 return;
@@ -224,7 +239,8 @@
             emptyMsg.style.display = 'none';
 
             let liveMatches = validMatches.filter(S => !S.isFinished);
-            let finishedMatches = validMatches.filter(S => S.isFinished);
+            let finishedMatches = validMatches.filter(S => S.isFinished && !S.isAborted);
+            let abortedMatches = validMatches.filter(S => S.isAborted);
 
             liveMatches.sort((a, b) => {
                 const numA = parseInt(a.meta.court.split('_')[1]) || 0;
@@ -233,6 +249,10 @@
             });
 
             finishedMatches.sort((a, b) => {
+                return b.lastUpdate - a.lastUpdate;
+            });
+            
+            abortedMatches.sort((a, b) => {
                 return b.lastUpdate - a.lastUpdate;
             });
 
@@ -248,6 +268,13 @@
                 finishedWrap.innerHTML = finishedMatches.map(S => createMatchCardHTML(S)).join('');
             } else {
                 finishedSection.style.display = 'none';
+            }
+            
+            if (abortedMatches.length > 0) {
+                abortedSection.style.display = 'block';
+                abortedWrap.innerHTML = abortedMatches.map(S => createMatchCardHTML(S)).join('');
+            } else {
+                abortedSection.style.display = 'none';
             }
         }
 

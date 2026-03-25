@@ -319,12 +319,30 @@
             
             // ★勝者の判定
             let winner = '';
-            if (S.isFinished) {
+            if (S.isFinished && !S.isAborted) {
                 if (S.gL > S.gR) winner = 'L';
                 else if (S.gR > S.gL) winner = 'R';
             }
             
-            if (S.isFinished) {
+            if (S.isAborted) {
+                badge.className = 'live-badge finished';
+                badge.style.backgroundColor = '#e2e8f0';
+                badge.style.color = '#475569';
+                badge.style.borderColor = '#cbd5e1';
+                badge.innerHTML = `🛑 試合打ち切り`;
+                document.getElementById('v-status').textContent = "試合は中断・打ち切りとなりました";
+                document.getElementById('v-status').style.color = "var(--text-dim)";
+                spinner.style.display = 'none';
+                
+                // 両チームともグレーダウン
+                document.getElementById('v-teamL').style.color = "var(--text-dim)";
+                document.getElementById('v-teamR').style.color = "var(--text-dim)";
+                document.getElementById('v-gL').className = "gc-score lose-text";
+                document.getElementById('v-gR').className = "gc-score lose-text";
+                document.getElementById('v-pL').className = "pt-box lose-text";
+                document.getElementById('v-pR').className = "pt-box lose-text";
+
+            } else if (S.isFinished) {
                 const winnerName = winner === 'L' ? S.teams.L : (winner === 'R' ? S.teams.R : '引き分け');
                 badge.className = 'live-badge finished';
                 badge.innerHTML = `👑 WINNER: ${winnerName}`;

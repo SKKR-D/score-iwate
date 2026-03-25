@@ -318,8 +318,10 @@
                 <div style="font-size:0.8rem; font-weight:bold; color:var(--text-dim); margin-bottom: 4px;">ゲームカウント</div>
                 <div class="game-score-display" style="line-height:1;margin-top:-10px;"><span class="gs-left" id="gs-L">0</span>-<span class="gs-right" id="gs-R">0</span></div>
             </div>
+            
             <div style="display:flex; gap:8px; align-items:center;">
-                <button onclick="undo()" style="background:none; border:none; font-size:1.6rem; cursor:pointer;">↩️</button>
+                <button onclick="abortMatch()" style="background:none; border:none; font-size:1.6rem; cursor:pointer;" title="試合を打ち切る">🛑</button>
+                <button onclick="undo()" style="background:none; border:none; font-size:1.6rem; cursor:pointer;" title="1つ戻る">↩️</button>
             </div>
         </div>
 
@@ -995,6 +997,22 @@
             if(failedData.length > 0) {
                 alert(`${failedData.length}件の送信に失敗しました。後で再試行してください。`);
                 btn.disabled = false;
+            }
+        }
+
+        // --- 試合打ち切り処理 ---
+        function abortMatch() {
+            if (!isMatchStarted) return;
+            if (confirm('【警告】本当にこの試合を「打ち切り」として終了しますか？\n（ダッシュボード等には「打ち切り」と表示され、このコートは空き状態になります）')) {
+                // 終了フラグと打ち切りフラグの両方を立てる
+                S.isFinished = true;
+                S.isAborted = true; 
+                
+                sendToLive(true); // サーバーへ最終状態を即座に送信
+                isMatchStarted = false;
+                
+                alert('試合を打ち切りました。最初の画面に戻ります。');
+                location.reload(); // 画面をリロードして初期状態に戻す
             }
         }
     </script>

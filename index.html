@@ -838,10 +838,14 @@
             p_ace_type: [ { k: 'overhead', l: 'オーバー', i: '⬆' }, { k: 'undercut', l: 'カット', i: '⬇' }, { k: 'other_input', l: 'その他', i: '🖊', custom: true } ],
             r_ace_shot: [ { k: 'shoot', l: 'シュート', i: '⚡', sub: 'r_ace_course' }, { k: 'lob', l: 'ロブ', i: '☁', sub: 'r_ace_course' }, { k: 'twist', l: 'ツイスト', i: '🌀', sub: 'r_ace_course' } ],
             r_ace_course: [ { k: 'cross', l: 'クロス', i: '↖' }, { k: 'rev', l: '逆クロス', i: '↗' }, { k: 'ctr', l: 'センター', i: '•' }, { k: 'str', l: 'ストレート', i: '↑' } ],
-            p_shot: [ { k: 'shoot', l: 'シュート', i: '⚡', sub: 'p_course' }, { k: 'lob', l: 'ロブ', i: '☁', sub: 'p_course' }, { k: 'volley', l: 'ボレー', i: '🛡', sub: 'p_course' }, { k: 'smash', l: 'スマッシュ', i: '💥', sub: 'p_course' }, { k: 'drop', l: 'ドロップ', i: '🌀', sub: 'p_course' } ],
+            p_shot: [ { k: 'shoot', l: 'シュート', i: '⚡', sub: 'p_course' }, { k: 'lob', l: 'ロブ', i: '☁', sub: 'p_course' }, { k: 'volley', l: 'ボレー', i: '🛡', sub: 'p_volley_type' }, { k: 'smash', l: 'スマッシュ', i: '💥', sub: 'p_course' }, { k: 'drop', l: 'ドロップ', i: '🌀', sub: 'p_course' } ],
+            p_volley_type: [ { k: 'high', l: 'ハイボレー', i: '⤴', sub: 'p_course' }, { k: 'low', l: 'ローボレー', i: '⤵', sub: 'p_course' }, { k: 'poach', l: 'ポーチ', i: '⚡', sub: 'p_course' }, { k: 'def', l: '守り', i: '🛡', sub: 'p_course' } ],
             p_course: [ { k: 'cross', l: 'クロス', i: '↖' }, { k: 'rev', l: '逆クロス', i: '↗' }, { k: 'ctr', l: 'センター', i: '•' }, { k: 'str', l: 'ストレート', i: '↑' } ],
             m: [ { k: 'f', l: 'フォア', i: '🟦', sub: 'm_shot' }, { k: 'b', l: 'バック', i: '🟪', sub: 'm_shot' }, { k: 'recv', l: 'Rミス', i: '🎾', sub: 'm_recv_hand' } ],
-            m_shot: [ { k: 'shoot', l: 'シュート', i: '⚡', sub: 'm_course' }, { k: 'lob', l: 'ロブ', i: '☁', sub: 'm_course' }, { k: 'volley', l: 'ボレー', i: '🛡', sub: 'm_course' }, { k: 'smash', l: 'スマッシュ', i: '💥', sub: 'm_course' }, { k: 'drop', l: 'ドロップ', i: '🌀', sub: 'm_course' } ],
+            m_shot: [ { k: 'shoot', l: 'シュート', i: '⚡', sub: 'm_course' }, { k: 'lob', l: 'ロブ', i: '☁', sub: 'm_course' }, { k: 'volley', l: 'ボレー', i: '🛡', sub: 'm_volley_type' }, { k: 'smash', l: 'スマッシュ', i: '💥', sub: 'm_course' }, { k: 'drop', l: 'ドロップ', i: '🌀', sub: 'm_course' } ],
+            m_volley_type: [ { k: 'high', l: 'ハイボレー', i: '⤴', sub: 'm_volley_err' }, { k: 'low', l: 'ローボレー', i: '⤵', sub: 'm_volley_err' }, { k: 'poach', l: 'ポーチ', i: '⚡', sub: 'm_volley_err' }, { k: 'def', l: '守り', i: '🛡', sub: 'm_volley_err' } ],
+            m_volley_err: [ { k: 'out', l: 'アウト', i: '➡', sub: 'm_volley_course' }, { k: 'net', l: 'ネット', i: '🔴', sub: 'm_volley_course' }, { k: 'tip', l: 'チップ', i: '💫', sub: 'm_volley_course' }, { k: 'swing', l: '空振り', i: '💨', sub: 'm_volley_course' } ],
+            m_volley_course: [ { k: 'cross', l: 'クロス', i: '↖' }, { k: 'rev', l: '逆クロス', i: '↗' }, { k: 'ctr', l: 'センター', i: '•' }, { k: 'str', l: 'ストレート', i: '↑' } ],
             m_course: [ { k: 'cross', l: 'クロス', i: '↖', sub: 'm_err' }, { k: 'rev', l: '逆クロス', i: '↗', sub: 'm_err' }, { k: 'ctr', l: 'センター', i: '•', sub: 'm_err' }, { k: 'str', l: 'ストレート', i: '↑', sub: 'm_err' } ],
             m_err: [ { k: 'bout', l: 'Bアウト', i: '⬆' }, { k: 'sout', l: 'Sアウト', i: '➡' }, { k: 'net', l: 'ネット', i: '🔴' } ],
             m_recv_hand: [ { k: 'f', l: 'フォア', i: '🟦', sub: 'm_recv_type' }, { k: 'b', l: 'バック', i: '🟪', sub: 'm_recv_type' } ],
@@ -879,7 +883,7 @@
         function getLbl(k) {
             if (k === 'ace') return 'SA'; if (k === 'df') return 'DF';
             const parts = k.split('_');
-            const dict = { recv: 'R', f: 'F', b: 'B', shoot: 'S', lob: 'L', twist: 'Tw', drop: 'Dr', volley: 'V', smash: 'Sm', str: 'St', cross: 'Cr', rev: 'Rx', ctr: 'Ct', net: 'Nt', out: 'Ot', sout: 'S.Ot', bout: 'B.Ot', back: 'Bk', overhead: 'Ov', undercut: 'Un', other: 'Etc' };
+            const dict = { recv: 'R', f: 'F', b: 'B', shoot: 'S', lob: 'L', twist: 'Tw', drop: 'Dr', volley: 'V', smash: 'Sm', str: 'St', cross: 'Cr', rev: 'Rx', ctr: 'Ct', net: 'Nt', out: 'Ot', sout: 'S.Ot', bout: 'B.Ot', back: 'Bk', overhead: 'Ov', undercut: 'Un', other: 'Etc', high: 'Hi', low: 'Lw', poach: 'Po', def: 'Df', tip: 'Tip', swing: 'Sw' };
             let validParts = parts;
             if (parts[0] === 'recv' && parts.length > 1) { validParts = parts.slice(1); return 'R-' + validParts.map(p => dict[p] || p).join('-'); }
             return validParts.map(p => dict[p] || p).join('-');

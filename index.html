@@ -647,11 +647,11 @@
             
             if (type === 'p') { 
                 S.stats[p].p++; if (sub) S.stats[p].pt[sub] = (S.stats[p].pt[sub] || 0) + 1; 
-                S.hist.push(side); side === 'L' ? S.pL++ : S.pR++; 
+                S.hist.push({ w: side, s: inf.t, f: (S.fault === 0) }); side === 'L' ? S.pL++ : S.pR++; 
             } else { 
                 S.stats[p].m++; 
                 if (sub) { S.stats[p].mt[sub] = (S.stats[p].mt[sub] || 0) + 1; if (sub.startsWith('recv_')) S.stats[p].mt['recv'] = (S.stats[p].mt['recv'] || 0) + 1; }
-                S.hist.push(side === 'L' ? 'R' : 'L'); side === 'L' ? S.pR++ : S.pL++; 
+                S.hist.push({ w: side === 'L' ? 'R' : 'L', s: inf.t, f: (S.fault === 0) }); side === 'L' ? S.pR++ : S.pL++; 
             }
             S.fault = 0; S.totalP++; 
             document.getElementById('submenu').classList.remove('open'); 
@@ -676,7 +676,7 @@
                 S.stats[inf.s].st++; 
                 S.stats[inf.s].m++; 
                 S.stats[inf.s].mt['df'] = (S.stats[inf.s].mt['df'] || 0) + 1; 
-                S.hist.push(inf.t === 0 ? 'R' : 'L'); 
+                S.hist.push({ w: inf.t === 0 ? 'R' : 'L', s: inf.t, f: false }); 
                 inf.t === 0 ? S.pR++ : S.pL++; 
                 S.totalP++; 
                 
@@ -811,7 +811,11 @@
             
             const flowDiv = document.getElementById('game-flow-list'); flowDiv.innerHTML = '';
             S.log.forEach((g, i) => {
-                const pts = g.flow.map(x => `<div class="dot-s ${x === 'L' ? 'dot-L' : 'dot-R'}">${x}</div>`).join('');
+                // 過去の保存データ(文字列)が読み込まれてもエラーにならないための互換性処理
+                const pts = g.flow.map(x => {
+                    const winner = typeof x === 'string' ? x : x.w;
+                    return `<div class="dot-s ${winner === 'L' ? 'dot-L' : 'dot-R'}">${winner}</div>`;
+                }).join('');
                 flowDiv.innerHTML += `<div class="game-flow-row"><div class="gfr-label">G${i + 1}</div><div class="gfr-dots">${pts}</div></div>`;
             });
         }
@@ -893,7 +897,13 @@
             const cvs = document.getElementById(id); if (!cvs) return;
             const ctx = cvs.getContext('2d'); const dpr = window.devicePixelRatio || 1; const rect = cvs.getBoundingClientRect();
             cvs.width = rect.width * dpr; cvs.height = rect.height * dpr; ctx.scale(dpr, dpr);
-            const w = rect.width; const h = rect.height; const pts = [0]; let c = 0; hist.forEach(x => { c += (x === 'L' ? 1 : -1); pts.push(c); });
+            const w = rect.width; const h = rect.height; const pts = [0]; let c = 0; 
+            hist.forEach(x => { 
+                // 過去データ読み込み時の互換性対応
+                const winner = typeof x === 'string' ? x : x.w;
+                c += (winner === 'L' ? 1 : -1); 
+                pts.push(c); 
+            });
             const absMax = Math.max(fin ? 9 : 5, ...pts.map(Math.abs)); 
             const mid = h / 2; const sc = (mid - 6) / absMax; const step = (w - 10) / (pts.length || 1);
             ctx.beginPath(); ctx.strokeStyle = '#ccc'; ctx.moveTo(0, mid); ctx.lineTo(w, mid); ctx.stroke();
